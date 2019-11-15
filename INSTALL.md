@@ -353,10 +353,10 @@ _django_superuser() {
 Reload apache for load new config.
 
 ```shell script
-    _restart_apache() {
-        _message "Reloading Apache"
-        systemctl reload apache2
-    }
+_restart_apache() {
+    _message "Reloading Apache"
+    systemctl reload apache2
+}
 ```
 
 
