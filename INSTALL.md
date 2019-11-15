@@ -46,6 +46,10 @@
 ![Drag Racing](docs/AI-install.png)
 
 
+### Django workflow
+
+[django-workflow](docs/django-workflow.png)
+
 
 ## Install steps
 

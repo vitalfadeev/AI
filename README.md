@@ -9,12 +9,6 @@ Script:
     ./deploy.sh
 
 
-### Django workflow
-
-![django-workflow](docs/django-workflow.png)
-
-
-
 ## Send logic
 - phase 1 (uploading)
     - upload file xls / csv
