@@ -1,5 +1,5 @@
 ## install 
-See descriptin in [INSTALL.md]()
+See descriptin in [INSTALL.md](INSTALL.md)
 
 Script:
 
