@@ -184,6 +184,7 @@ _site() {
 
 For save user uploaded files (like a .csv, .xls) need access: RW to folder <site>/media
 
+```shell script
 _site_permissions() {
     _message "Setting site permissions"
     chown -R ${APACHE_USER}:${APACHE_GROUP} ${SITE_FOLDER}
