@@ -4,7 +4,6 @@
 DOMAIN=local.ixioo.com
 
 SITE_FOLDER=/home/vital/src/AI
-SITE_GIT=https://github.com/vitalfadeev/AI.git
 SITE_CONFIG=/etc/apache2/sites-available/${DOMAIN}.conf
 SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
 
@@ -82,13 +81,16 @@ EOF
 
 _site() {
     _message "Coping site files"
-    cd `dirname ${SITE_FOLDER}`
-    git clone ${SITE_GIT} ${SITE_FOLDER}
+    mkdir ${SITE_FOLDER}
+    SELF_PATH="`dirname \"$0\"`"
+    cd ${SELF_PATH}
+    cp -a . ${SITE_FOLDER}/
 }
 
 
 _site_permissions() {
     _message "Setting site permissiona"
+    chmod -R a+r ${SITE_FOLDER}
     cd ${SITE_FOLDER}
     mkdir ${SITE_FOLDER}/media
     chmod -R a+rw ${SITE_FOLDER}/media
