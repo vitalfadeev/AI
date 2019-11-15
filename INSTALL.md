@@ -198,7 +198,7 @@ _site_permissions() {
 
 ### 6. Creating Python venv
 
-Python environment for keep modules with specific version, independent of system modules.
+For separate Python site modules from system modules creating environment. 
  
  ```shell script
 _python_venv() {
