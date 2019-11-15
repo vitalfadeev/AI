@@ -3,9 +3,10 @@
 #
 DOMAIN=local.ixioo.com
 
-SITE_CONFIG=/etc/apache2/sites-available/${DOMAIN}.conf
 SITE_FOLDER=/home/vital/src/AI
 SITE_GIT=https://github.com/vitalfadeev/AI.git
+SITE_CONFIG=/etc/apache2/sites-available/${DOMAIN}.conf
+SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
 
 DB_NAME=AI
 DB_USER=${DB_NAME}_dbu
@@ -46,8 +47,10 @@ _apache_config() {
     APACHE_USER=www-data
     APACHE_GROUP=www-data
 
-    cat > $SITE_CONFIG <<EOF
-    <VirtualHost *:80>
+    sudo touch ${SITE_CONFIG}
+    sudo chmod a+rw ${SITE_CONFIG}
+    cat > ${SITE_CONFIG} <<EOF
+<VirtualHost *:80>
     ServerName ${DOMAIN}
 
     DocumentRoot ${SITE_FOLDER}
@@ -55,7 +58,7 @@ _apache_config() {
     CustomLog /var/log/apache2/ai_access.log common
     ErrorLog /var/log/apache2/ai_error.log
 
-    WSGIDaemonProcess ${DOMAIN} user=${APACHE_USER} group${APACHE_GROUP} python-path=${SITE_FOLDER}
+    WSGIDaemonProcess ${DOMAIN} user=${APACHE_USER} group=${APACHE_GROUP} python-path=${SITE_FOLDER}:${SITE_VENV_PACKAGES_PATH}
     WSGIProcessGroup ${DOMAIN}
     WSGIScriptAlias / ${SITE_FOLDER}/core/wsgi.py
 
@@ -70,8 +73,10 @@ _apache_config() {
             Require all granted
         </Files>
     </Directory>
-    </VirtualHost>
+</VirtualHost>
 EOF
+
+    sudo chmod a-w ${SITE_CONFIG}
 }
 
 
@@ -109,6 +114,16 @@ _python_requirements() {
 _mysql() {
     _message "Instlling MySQL server"
     sudo apt install mysql-server
+}
+
+
+_mysql_drop_old_db() {
+    _message "Dropping old MySQL databases"
+    mysql -u root -p <<EOF
+    DROP DATABASE IF EXISTS ${DB_NAME};
+    DROP DATABASE IF EXISTS ${DB_NAME_MachineData};
+    DROP DATABASE IF EXISTS ${DB_NAME_GlobalLogger};
+EOF
 }
 
 
@@ -175,13 +190,17 @@ _django_superuser() {
 
 _restart_apache() {
     _message "Restarting Apache"
-    a2ensite ${DOMAIN}
+    sudo a2ensite ${DOMAIN}
     sudo systemctl restart apache2
 }
 
 
+_final_message() {
+    _message "Site available at: http://${DOMAIN}"
+}
+
+
 _python
-##_hosts
 _apache_config
 _site
 _site_permissions
@@ -193,6 +212,8 @@ _django_local_settings
 _django_tables
 _django_superuser
 _restart_apache
+_final_message
+
 ## _gunicorn
 
 
