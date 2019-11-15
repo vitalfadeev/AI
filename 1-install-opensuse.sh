@@ -9,12 +9,12 @@ SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
 
 DB_NAME=AI
 DB_USER=${DB_NAME}_dbu
-DB_PASS=ixioo777
+DB_PASS=******
 DB_NAME_MachineData=MachineData
 DB_NAME_GlobalLogger=GlobalLogger
 
 SMTP_SERVER=srv6.wahooart.com
-SMTP_USER=info@ixioo.com
+SMTP_USER=******
 SMTP_PASS=
 
 APACHE_USER=wwwrun
