@@ -19,13 +19,20 @@ SMTP_PASS=
 
 
 #
+_message() {
+    MESSAGE=$*
+    echo -e "\e[32m${MESSAGE}\e[0m"
+}
+
 _python() {
+    _message "Installing Python"
     sudo apt install python3
     sudo apt install apache2 libapache2-mod-wsgi-py3
 }
 
 
 _hosts() {
+    _message "Updating hosts"
     # /etc/hosts
     # for developer only
     cat > /etc/hosts <<EOF
@@ -35,6 +42,7 @@ EOF
 
 
 _apache_config() {
+    _message "Creating Apache config"
     APACHE_USER=www-data
     APACHE_GROUP=www-data
 
@@ -68,12 +76,14 @@ EOF
 
 
 _site() {
+    _message "Coping site files"
     cd `dirname ${SITE_FOLDER}`
     git clone ${SITE_GIT} ${SITE_FOLDER}
 }
 
 
 _site_permissions() {
+    _message "Setting site permissiona"
     cd ${SITE_FOLDER}
     mkdir ${SITE_FOLDER}/media
     chmod -R a+rw ${SITE_FOLDER}/media
@@ -81,12 +91,14 @@ _site_permissions() {
 
 
 _python_venv() {
+    _message "Creating Python venv"
     cd ${SITE_FOLDER}
     python3 -m venv venv
 }
 
 
 _python_requirements() {
+    _message "Instlling requiremtns"
     cd ${SITE_FOLDER}
     source venv/bin/activate
     pip install pip --upgrade
@@ -95,11 +107,13 @@ _python_requirements() {
 
 
 _mysql() {
+    _message "Instlling MySQL server"
     sudo apt install mysql-server
 }
 
 
 _mysql_db() {
+    _message "Creating MySQL DB"
     mysql -u root -p <<EOF
     CREATE DATABASE IF NOT EXISTS ${DB_NAME} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
     GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';
@@ -113,6 +127,7 @@ EOF
 
 
 _django_local_settings() {
+    _message "Creaing Django local settigns"
     # local_settings
     cat > ${SITE_FOLDER}/core/local_setting.py <<EOF
 EMAIL_USE_TLS = False
@@ -138,6 +153,7 @@ EOF
 
 
 _django_tables() {
+    _message "Creaing Django tables"
     cd ${SITE_FOLDER}
     for folder in ./*
     do
@@ -147,11 +163,18 @@ _django_tables() {
     source venv/bin/activate
     ./manage.py makemigrations
     ./manage.py migrate
+}
+
+
+_django_superuser() {
+    _message "Creating Django superuser"
+    source venv/bin/activate
     ./manage.py createsuperuser
 }
 
 
 _restart_apache() {
+    _message "Restarting Apache"
     a2ensite ${DOMAIN}
     sudo systemctl restart apache2
 }
@@ -168,6 +191,7 @@ _mysql
 _mysql_db
 _django_local_settings
 _django_tables
+_django_superuser
 _restart_apache
 ## _gunicorn
 
