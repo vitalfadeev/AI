@@ -2,14 +2,17 @@
 
 #
 DOMAIN=local.ixioo.com
+
 SITE_CONFIG=/etc/apache2/sites-available/${DOMAIN}.conf
 SITE_FOLDER=/home/vital/src/AI
 SITE_GIT=https://github.com/vitalfadeev/AI.git
-DB_NAME=ai
+
+DB_NAME=AI
 DB_USER=${DB_NAME}_dbu
 DB_PASS=ixioo777
 DB_NAME_MachineData=MachineData
 DB_NAME_GlobalLogger=GlobalLogger
+
 SMTP_SERVER=srv6.wahooart.com
 SMTP_USER=info@ixioo.com
 SMTP_PASS=
@@ -72,6 +75,7 @@ _site() {
 
 _site_permissions() {
     cd ${SITE_FOLDER}
+    mkdir ${SITE_FOLDER}/media
     chmod -R a+rw ${SITE_FOLDER}/media
 }
 
@@ -90,33 +94,57 @@ _python_requirements() {
 }
 
 
-_mysql_db() {
+_mysql() {
     sudo apt install mysql-server
 }
 
 
 _mysql_db() {
-    mysql -u root -p
-    CREATE DATABASE ${DB_NAME} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-    GRANT ALL PRIVILEGES ON `${DB_NAME}`.* TO `${DB_USER}`@`%` IDENTIFIED BY '${DB_PASS}';
-    CREATE DATABASE ${DB_NAME_MachineData} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-    GRANT ALL PRIVILEGES ON `${DB_NAME_MachineData}`.* TO `${DB_USER}`@`%` IDENTIFIED BY '${DB_PASS}';
-    CREATE DATABASE ${DB_NAME_GlobalLogger} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-    GRANT ALL PRIVILEGES ON `${DB_NAME_GlobalLogger}`.* TO `${DB_USER}`@`%` IDENTIFIED BY '${DB_PASS}';
+    mysql -u root -p <<EOF
+    CREATE DATABASE IF NOT EXISTS ${DB_NAME} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+    GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';
+    CREATE DATABASE IF NOT EXISTS ${DB_NAME_MachineData} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+    GRANT ALL PRIVILEGES ON ${DB_NAME_MachineData}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';
+    CREATE DATABASE IF NOT EXISTS ${DB_NAME_GlobalLogger} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+    GRANT ALL PRIVILEGES ON ${DB_NAME_GlobalLogger}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';
     FLUSH PRIVILEGES;
+EOF
 }
 
 
-_django_db_settings() {
+_django_local_settings() {
     # local_settings
+    cat > ${SITE_FOLDER}/core/local_setting.py <<EOF
+EMAIL_USE_TLS = False
+EMAIL_HOST = '${SMTP_SERVER}'
+EMAIL_HOST_USER = '${SMTP_USER}'
+EMAIL_HOST_PASSWORD = '${SMTP_PASS}'
+EMAIL_PORT = 25
+
+DATABASE_ENGINE = 'django.db.backends.mysql'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '${DB_NAME}',
+        'USER': '${DB_USER}',
+        'PASSWORD': '${DB_PASS}',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+EOF
 }
 
 
 _django_tables() {
     cd ${SITE_FOLDER}
-    find . -path "*/migrations/*.py" -not -name "__init__.py" -path ./venv -prune -delete
-    find . -path "*/migrations/*.pyc"  -delete
+    for folder in ./*
+    do
+        [ -d $folder/migrations  ] && rm -rf $folder/migrations
+    done
 
+    source venv/bin/activate
     ./manage.py makemigrations
     ./manage.py migrate
     ./manage.py createsuperuser
@@ -125,12 +153,12 @@ _django_tables() {
 
 _restart_apache() {
     a2ensite ${DOMAIN}
-    systemctl restart apache2
+    sudo systemctl restart apache2
 }
 
 
 _python
-#_hosts
+##_hosts
 _apache_config
 _site
 _site_permissions
@@ -138,9 +166,9 @@ _python_venv
 _python_requirements
 _mysql
 _mysql_db
-_django_db_settings
+_django_local_settings
 _django_tables
 _restart_apache
-# _gunicorn
+## _gunicorn
 
 
