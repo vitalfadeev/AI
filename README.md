@@ -1,4 +1,8 @@
 ## install 
+See descriptin in [INSTALL.md]()
+
+Script:
+
     ./1-install-<platform>.sh
     
 ## Deploy
