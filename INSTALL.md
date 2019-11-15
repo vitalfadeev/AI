@@ -76,7 +76,7 @@ Ubuntu (for developer PC):
     
     SMTP_SERVER=srv6.wahooart.com
     SMTP_USER==********
-    SMTP_PASS=
+    SMTP_PASS==********
     
     APACHE_USER=wwwrun
     APACHE_GROUP=www
