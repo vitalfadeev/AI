@@ -20,6 +20,8 @@
                         templates/
                             *.html
                         core/
+                            settings.py
+                            local_settings.py
                             *.py
                         <modules>/
                             *.py
