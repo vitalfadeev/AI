@@ -52,13 +52,13 @@
 
 ### Script
 
-- for OpenSuse
+OpenSuse:
 
-        ./1-install-opensuse.sh
+    ./1-install-opensuse.sh
 
-- for Ubuntu (for developer PC): 
+Ubuntu (for developer PC): 
 
-        ./1-install-ubuntu.sh
+    ./1-install-ubuntu.sh
 
 ### Init
 
