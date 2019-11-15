@@ -147,7 +147,7 @@ class Machine(models.Model):
         return self.name
     
     class Meta:
-        db_table = 'brains'
+        db_table = 'Machine'
         verbose_name = _('Machine')
         verbose_name_plural = _('Machines')
 
