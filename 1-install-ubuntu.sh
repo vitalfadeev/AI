@@ -180,6 +180,16 @@ _django_tables() {
     source venv/bin/activate
     ./manage.py makemigrations
     ./manage.py migrate
+    ./manage.py makemigrations team
+    ./manage.py migrate
+    ./manage.py makemigrations userprofile
+    ./manage.py migrate
+    ./manage.py makemigrations machine
+    ./manage.py migrate
+    ./manage.py makemigrations communication
+    ./manage.py migrate
+    ./manage.py makemigrations consulting
+    ./manage.py migrate
 }
 
 
