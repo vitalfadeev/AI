@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li>Message Detail</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+        <table class="i-message-received">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Sender</th>
+                    <th>Sent To</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>{{ parent_message.created_date }}</td>
+                    <td>{{ parent_message.created_by }}</></td>
+                    <td>{{ parent_message.target }}</></td>
+                    <td>{{ parent_message.message }}</td>
+                </tr>
+                {% for child_message in parent_message.get_replies %}
+                <tr>
+                    <td>{{ child_message.created_date }}</td>
+                    <td><span data-name="{{ message.created_by }}" data-user-id="{{ child_message.created_by.id }}">{{ child_message.created_by }}</span></td>
+                    <td>{{ child_message.target }}</td>
+                    <td>{{ child_message.message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="col l12">
+                <br> <br>
+                <form action="#">
+                <div class="input-field col l8 m6 s12">
+                    <input id="message" type="text" class="validate">
+                    <label for="message">Message</label>
+                </div>
+                <div class="input-field col l4 m2 s12">
+                    <a class="btn green col l12 m12 s12">Send<span class="i-send-username"></span></a>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+    </div>
+
+{% endblock %}

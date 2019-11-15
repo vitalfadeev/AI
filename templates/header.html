@@ -1,0 +1,57 @@
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% user_display user as user_display %}
+
+{% if user.is_authenticated %}
+    <div class="nav-extended bf-blue-4 row col l12">
+        <div class="nav-wrapper bf-blue-4 col l12">
+            <a href="#" data-target="i-mobile-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="/" class=" {% if not current_page %} bf-blue-5 {% endif %}">Home</a></li>
+                <li><a href="/machine/public/" class=" {% if current_page == 'public' %} bf-blue-5 {% endif %}">Public Machines</a></li>
+                <li><a href="/machine/private/"  class=" {% if current_page == 'private' %} bf-blue-5 {% endif %}">My Machines</a></li>
+                <li><a href="#">My Works</a></li>
+                <li><a href="#">My Contracts</a></li>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/profile" class="{% if current_page == 'profile' %} bf-blue-5 {% endif %}">MY PROFILE</a></li>
+                <li><a href="/accounts/logout/" class=" {% if current_page == 'logout' %} bf-blue-5 {% endif %}">LOGOUT</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <ul id="i-mobile-menu" class="sidenav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/machine/public/" class=" {% if current_page == 'public' %} bf-blue-5 {% endif %}">Public Machines</a></li>
+        <li><a href="/machine/private/" class=" {% if current_page == 'private' %} bf-blue-5 {% endif %}">My Machines</a></li>
+        <li><a href="#">My Works</a></li>
+        <li><a href="#">My Contracts</a></li>
+        <hr>
+        <li><a href="/profile" class=" {% if current_page == 'profile' %} bf-blue-5 {% endif %}">MY PROFILE</a></li>
+        <li><a href="/accounts/logout/" class=" {% if current_page == 'logout' %} bf-blue-5 {% endif %}">LOGOUT</a></li>
+    </ul>
+{% else %}
+    <div class="row bf-blue-4">
+        <div class="nav-wrapper bf-blue-4 col l12">
+            <a href="#" data-target="i-mobile-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="/">Home</a></li>
+                <li><a href="/machine/public/" class=" {% if current_page == 'public' %} bf-blue-5 {% endif %}">Public Machines</a></li>
+            </ul>    
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="/accounts/login/" class=" {% if current_page == 'login' %} bf-blue-5 {% endif %}">LOGIN</a></li>
+                <li><a href="/accounts/signup/" class=" {% if current_page == 'signup' %} bf-blue-5 {% endif %}">REGISTER</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Mobile Menu -->
+    <ul id="i-mobile-menu" class="sidenav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/machine/public/" class=" {% if current_page == 'public' %} bf-blue-5 {% endif %}">Public Machines</a></li>
+        <hr>
+        <li><a href="/accounts/login/" class=" {% if current_page == 'login' %} bf-blue-5 {% endif %}">LOGIN</a></li>
+        <li><a href="/accounts/signup/" class=" {% if current_page == 'signup' %} bf-blue-5 {% endif %}">REGISTER</a></li>
+    </ul>
+{% endif %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+    <div class="z-depth-5 white black-text">
+        <table>
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Brain</th>
+                    <th>Work</th>
+                    <th>Work Adding Date</th>
+                    <th>Training?</th>
+                    <th>Solving?</th>
+                    <th>Status</th>
+                    <th>First Line</th>
+                    <th>Last Line</th>
+                    <th>Errors</th>
+                    <th>Warnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>First Team's name</td>
+                    <td>1st Brain</td>
+                    <td>Work 1</td>
+                    <td>11.11.2017</td>
+                    <td>text here</td>
+                    <td>text here</td>
+                    <td>text here</td>
+                    <td>First line text</td>
+                    <td>Last line text</td>
+                    <td>Error text here</td>
+                    <td>All warnings here</td>
+                </tr>
+                <tr>
+                    <td>First Team's name</td>
+                    <td>1st Brain</td>
+                    <td>Work 1</td>
+                    <td>11.11.2017</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td>First line text</td>
+                    <td>Last line text</td>
+                    <td>Error text here</td>
+                    <td>All warnings here</td>
+                </tr>
+                <tr>
+                    <td>First Team's name</td>
+                    <td>1st Brain</td>
+                    <td>Work 1</td>
+                    <td>11.11.2017</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td>First line text</td>
+                    <td>Last line text</td>
+                    <td>Error text here</td>
+                    <td>All warnings here</td>
+                </tr>
+                <tr>
+                    <td>First Team's name</td>
+                    <td>1st Brain</td>
+                    <td>Work 1</td>
+                    <td>11.11.2017</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td class="center">text here</td>
+                    <td>First line text</td>
+                    <td>Last line text</td>
+                    <td>Error text here</td>
+                    <td>All warnings here</td>
+                </tr>
+            </table>
+    </div>
+    {% else %}
+    {% endif %}
+
+{% endblock %}

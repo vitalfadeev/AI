@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+
+<!-- Sub Nav - Profile -->
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">My Profile</a></li>
+        </ul>
+        <ul id="A2" class="right">
+            <li><a href="#">[Remove My Profile]</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+    <form class="" method="POST" action=".">{% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div class="col l6 m6 s12">
+            {{ form.first_name }}
+            {{ form.last_name }}
+            {{ form.email }}
+            <div class="input-field col l12 m12 s12">
+                <button type="submit" class="waves-effect waves-light btn green">Save Changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!-- Sub Nav - Companies -->
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">Teams</a></li>
+        </ul>
+        <ul id="A2" class="right">
+            <li><a href="#modal-add-team" class="modal-trigger">[Add Team]</a></li>
+        </ul>
+    </div>
+</div>
+<div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+    <form class="">
+        <div class="row">
+            <ul class="collection black-text">
+                {% for team in teams %}
+                <li class="collection-item">
+                    <div>{{ team }}
+                        <a href="/team/{{team.id}}/edit/" class="secondary-content modal-trigger">
+                            [Edit]
+                        </a>
+                        <a href="#modal-delete-team{{team.id}}" class="secondary-content modal-trigger i-mr10">
+                            [Delete]
+                        </a>
+                    </div>
+
+                    <!-- Modal Structure -->
+                    <div id="modal-delete-team{{team.id}}" class="modal">
+                        <div class="modal-content">
+                        <h4>Are you sure?</h4>
+                        <p>This team will be deleted!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/team/{{ team.id }}/delete/" class="modal-close btn-flat">Delete</a>
+                            <a href="#!" class="modal-close btn-flat">Cancel</a>
+                        </div>
+                    </div>
+
+                    <!-- Modal Structure -->
+                    <div id="modal-edit-team{{team.id}}" class="modal">
+                        <div class="modal-content">
+                        <h4>Are you sure?</h4>
+                        <p>This team will be deleted!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/team/{{ team.id }}/edit/" class="modal-close btn-flat">Edit</a>
+                            <a href="#!" class="modal-close btn-flat">Cancel</a>
+                        </div>
+                    </div>
+
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </form>
+</div>
+
+
+    <!-- Modal Structure -->
+    <div id="modal-add-team" class="modal bf-modal-team-create">
+        <div class="modal-content no-padding">
+            <div data-inline-modal="/team/add/inline"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+
+<!-- Modal Structure -->
+<div id="modalUserMailPage" class="modal">
+    <div class="modal-content">
+        <h4>Enter Email address</h4>
+        <div class="row">
+            <div class="input-field col s12">
+                <input id="email" type="email" class="validate">
+                <label for="email">Email</label>
+            </div>
+            <a href="#!" class="col l12 m12 s12 waves-effect waves-light btn green">Add User</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- Sub Nav - Company Users -->
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">Team Members</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+    <table class="">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Company/Group</th>
+                <th>Is Admin?</th>
+                <th>Is Pending?</th>
+                <th>Revoke</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {% for member in all_members_accross_teams %}
+            <tr>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td class="hide-on-small-only">{{ member.email }}</td>
+                <td>..</td>
+                <td>..</td>
+                <td>Pending</td>
+                <td><a href="#">Revoke</a></td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Sub Nav - Messages -->
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">Message Received</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+    <table class="i-message-received">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Message</th>
+                <th>File</th>
+                <th class="center">Reply</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for message in messages_received %}
+            <tr>
+                <td>{{ message.created_date }}</td>
+                <td><span data-name="{{ message.created_by }}" data-user-id="{{ message.created_by.id }}">{{ message.created_by }}</span></td>
+                <td>{{ message.message }}</td>
+                <td>{{ message.message_file }}</td>
+                <td class="center i-reply"><a href="/message/{{ message.id }}/reply/">Reply</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="row i-reply-area hide">
+        <div class="col l12">
+                <br> <br>
+                <form action="#">
+                <div class="input-field col l5 m6 s12">
+                    <input id="message" type="text" class="validate">
+                    <label for="message">Message</label>
+                </div>
+                <div class="file-field input-field col l3 m3 s12">
+                    <div class="btn">
+                    <span>File</span>
+                    <input type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                    </div>
+                </div>
+                <div class="input-field col l4 m2 s12">
+                    <a class="btn green col l12 m12 s12">Send to <span class="i-send-username"></span></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<!-- Sub Nav - Messages Sent -->
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">Messages Sent</a></li>
+        </ul>
+    </div>
+
+<div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+    <table class="">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Message</th>
+                <th>File</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for message in messages_sent %}
+            <tr>
+                <td>{{ message.created_date }}</td>
+                <td><span data-name="{{ message.target }}" data-user-id="{{ message.target.id }}">{{ message.target }}</span></td>
+                <td>{{ message.message }}</td>
+                <td>{{ message.message_file }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

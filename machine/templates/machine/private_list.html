@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} List | Machines {% endblock %}
+
+{% block content %}
+
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="#">Machines</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="col l12 m12 s12 white black-text z-depth-5">
+    <table class="">
+        <thead>
+            <tr>
+                <th>Creation Date</th>
+                <th>Team</th>
+                <th>Project Name</th>
+                <th>Description</th>
+                <th>Names of columns input</th>
+                <th>Names of columns output</th>
+                <th class="center">Remove</th>
+                <th class="center">Update</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for machine in machines %}
+            <tr>
+                <td><a href="/machine/{{ machine.id }}/project/">{{ machine.created_date }}</a></td>
+                <td><a href="/machine/{{ machine.id }}/project/">{{ machine.team }}</a></td>
+                <td><a href="/machine/{{ machine.id }}/project/">{{ machine.name }}</a></td>
+                <td><a href="/machine/{{ machine.id }}/project/">{{ machine.desc }}</a></td>
+                <td>
+                    {% for col in machine.analysis_source_columns.all %}
+                        {% if col.type == 'IN' %} {{ col }} {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for col in machine.analysis_source_columns.all %}
+                        {% if col.type == 'OUT' %} {{ col.name }} {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="center"><a class="modal-trigger" href="#modal-delete-machine"></a></td>
+                <td class="center"><a href="/machine/private/"></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+        <!-- Modal Structure -->
+        <div id="modal-delete-machine" class="modal">
+            <div class="modal-content">
+            <h4>Are you sure?</h4>
+            <p>This machine will be deleted!</p>
+            </div>
+            <div class="modal-footer">
+                <a href="/machine/id/delete/" class="modal-close btn-flat">Delete</a>
+                <a href="#!" class="modal-close btn-flat">Cancel</a>
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <br>
+            <a class="waves-effect waves-light btn" href="/machine/add/">New Machine</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

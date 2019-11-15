@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Create New Team{% endblock %}
+
+{% block content %}
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="/team/{{ team.id }}/"><b>{{ team.name }}</b></a></li>
+            </ul>
+            <ul id="A2" class="right">
+                <li><a href="/team/{{ team.id }}/edit/">[Change Name]</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+        <h5>Members</h5>
+    
+        <table class="">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Is Admin?</th>
+                    <th>Revoke</th>
+            </tr>
+            </thead>
+    
+            <tbody>
+                {% for member in team.members.all %}
+                <tr>
+                    <td>{{ member.first_name }}</td>
+                    <td>{{ member.last_name }}</td>
+                    <td class="hide-on-small-only">{{ member.email }}</td>
+                    <td>{% if member in team.admins.all %}
+                        Yes | <a href="#">Revoke Admin Rights</a>
+                        {% else %}
+                        No | <a href="#">Make Admin</a>
+                        {% endif %}
+                        </td>
+                    <td><a href="#">Revoke Access Rights</a></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="5">
+                        <form action="." method="POST">{% csrf_token %}
+
+                            <div class="col l12 m12 s12">
+                                <div class="input-field col l5 m5">
+                                    {{ form.email }}
+                                    <label for="email">Email</label>
+                                </div>
+
+                                <div class="input-field col l5 m5">
+                                    If there is no user with the provided email address, owner of the email will be informed by email.
+                                </div>
+                                
+                            </div>
+
+                            <div class="col l12 m12 s12">
+                                <div class="input-field col m12 valign-wrapper">
+                                    <input type="submit" class="btn green" value="Invite">
+                                </div>
+                            </div>
+
+                        </form> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
