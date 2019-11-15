@@ -68,33 +68,37 @@ Ubuntu (for developer PC):
 
 ### Init
 
-    DOMAIN=AI.ixioo.com
-    
-    SITE_FOLDER=/home/www/htdocs/AI
-    SITE_CONFIG=/etc/apache2/vhosts.d/${DOMAIN}.conf
-    SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
-    
-    DB_NAME=AI
-    DB_USER=${DB_NAME}_dbu
-    DB_PASS=********
-    DB_NAME_MachineData=MachineData
-    DB_NAME_GlobalLogger=GlobalLogger
-    
-    SMTP_SERVER=srv6.wahooart.com
-    SMTP_USER==********
-    SMTP_PASS==********
-    
-    APACHE_USER=wwwrun
-    APACHE_GROUP=www
+```shell script
+DOMAIN=AI.ixioo.com
+
+SITE_FOLDER=/home/www/htdocs/AI
+SITE_CONFIG=/etc/apache2/vhosts.d/${DOMAIN}.conf
+SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
+
+DB_NAME=AI
+DB_USER=${DB_NAME}_dbu
+DB_PASS=********
+DB_NAME_MachineData=MachineData
+DB_NAME_GlobalLogger=GlobalLogger
+
+SMTP_SERVER=srv6.wahooart.com
+SMTP_USER==********
+SMTP_PASS==********
+
+APACHE_USER=wwwrun
+APACHE_GROUP=www
+```
 
 
 ### 1. Installing Python
 
-    _python() {
-        _message "Installing Python"
-        zypper install python3
-        zypper install apache2 apache2-mod_wsgi-python3
-    }
+```shell script
+_python() {
+    _message "Installing Python"
+    zypper install python3
+    zypper install apache2 apache2-mod_wsgi-python3
+}
+```
 
 
 ### 2. (for developer PC only) updating hosts
