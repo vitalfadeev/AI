@@ -6,9 +6,9 @@ import sys
  
 from django.core.wsgi import get_wsgi_application 
  
-sys.path.append('/srv/www/htdocs/BrainFactory') 
+#sys.path.append('/srv/www/htdocs/AI') 
 # adjust the Python version in the line below as needed 
-sys.path.append('/srv/www/htdocs/BrainFactory/venv/lib/python3.7/site-packages') 
+#sys.path.append('/srv/www/htdocs/AI/venv/lib/python3.6/site-packages') 
  
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings") 
  

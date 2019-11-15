@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#
+# Settings
 DOMAIN=AI.ixioo.com
 
 SITE_FOLDER=/home/www/htdocs/AI
@@ -19,6 +19,10 @@ SMTP_PASS=
 
 APACHE_USER=wwwrun
 APACHE_GROUP=www
+
+
+# stop on eany error
+set -e
 
 
 #
@@ -82,7 +86,7 @@ EOF
 
 _site() {
     _message "Coping site files"
-    mkdir ${SITE_FOLDER}
+    [ -d ${SITE_FOLDER} ] || mkdir ${SITE_FOLDER}
     SELF_PATH="`dirname \"$0\"`"
     cd ${SELF_PATH}
     cp -a . ${SITE_FOLDER}/
@@ -94,7 +98,7 @@ _site_permissions() {
     chown -R ${APACHE_USER}:${APACHE_GROUP} ${SITE_FOLDER}
     chmod -R a+r ${SITE_FOLDER}
     cd ${SITE_FOLDER}
-    mkdir ${SITE_FOLDER}/media
+    [ -d ${SITE_FOLDER}/media ] || mkdir ${SITE_FOLDER}/media
     chmod -R a+rw ${SITE_FOLDER}/media
 }
 
@@ -117,6 +121,7 @@ _python_requirements() {
 
 _mysql() {
     _message "Instlling MySQL server (mariadb)"
+    zypper install gcc7-c++ gcc-c++ libstdc++6-devel-gcc7 python3-devel libmariadb-devel
     zypper install mariadb
 }
 
@@ -207,10 +212,10 @@ _python
 _apache_config
 _site
 _site_permissions
-_python_venv
-_python_requirements
 _mysql
 _mysql_db
+_python_venv
+_python_requirements
 _django_local_settings
 _django_tables
 _django_superuser
