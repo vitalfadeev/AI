@@ -177,6 +177,7 @@ _site() {
     cd ${SELF_PATH}
     cp -a . ${SITE_FOLDER}/
 }
+```
 
 
 ### 5. Setting site permissions
