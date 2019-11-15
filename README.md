@@ -1,8 +1,14 @@
 ## install 
-    ./1-install.sh
+    ./1-install-<platform>.sh
     
 ## Deploy
     ./deploy.sh
+
+
+### Django workflow
+
+![django-workflow](docs/django-workflow.png)
+
 
 
 ## Send logic

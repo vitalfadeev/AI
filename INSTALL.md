@@ -268,7 +268,9 @@ Here logins/passwords and pathes, platform specific.
 
 After install need create tables: users, groups, auth, machines, billings, graphs, and other.
 
-DB tables created from models. It does in 2 steps: create migrations, migrate.   
+DB tables created from models. It does in 2 steps: create migrations, migrate.
+
+Because tables have foreign keys, needed migrate in specific order,    
 
     _django_tables() {
         _message "Creating Django tables"
@@ -280,6 +282,16 @@ DB tables created from models. It does in 2 steps: create migrations, migrate.
     
         source venv/bin/activate
         ./manage.py makemigrations
+        ./manage.py migrate
+        ./manage.py makemigrations team
+        ./manage.py migrate
+        ./manage.py makemigrations userprofile
+        ./manage.py migrate
+        ./manage.py makemigrations machine
+        ./manage.py migrate
+        ./manage.py makemigrations communication
+        ./manage.py migrate
+        ./manage.py makemigrations consulting
         ./manage.py migrate
     }
 
