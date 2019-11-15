@@ -110,15 +110,6 @@ _python_venv() {
 }
 
 
-_python_requirements() {
-    _message "Instlling requiremtns"
-    cd ${SITE_FOLDER}
-    source venv/bin/activate
-    pip install pip --upgrade
-    pip install -r requirements.txt
-}
-
-
 _mysql() {
     _message "Instlling MySQL server (mariadb)"
     zypper install gcc7-c++ gcc-c++ libstdc++6-devel-gcc7 python3-devel libmariadb-devel
@@ -147,6 +138,19 @@ _mysql_db() {
     GRANT ALL PRIVILEGES ON ${DB_NAME_GlobalLogger}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';
     FLUSH PRIVILEGES;
 EOF
+}
+
+
+_python_requirements() {
+    _message "Instlling requiremtns"
+
+    zypper install gcc7-c++ gcc-c++ libstdc++6-devel-gcc7 python3-devel libmariadb-devel
+    zypper install zlib zlib-devel
+
+    cd ${SITE_FOLDER}
+    source venv/bin/activate
+    pip install pip --upgrade
+    pip install -r requirements.txt
 }
 
 
