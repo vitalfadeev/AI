@@ -330,4 +330,4 @@ Reload apache for load new config.
 
 ### 14. All done!
 
-Site ready: http://<DOMAIN>
+Site ready: http://{DOMAIN}
