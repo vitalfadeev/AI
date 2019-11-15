@@ -51,7 +51,7 @@
 [django-workflow](docs/django-workflow.png)
 
 
-## Install steps
+## Installation steps
 
 
 ### Script
