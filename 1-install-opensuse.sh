@@ -51,8 +51,8 @@ EOF
 _apache_config() {
     _message "Creating Apache config"
 
-    sudo touch ${SITE_CONFIG}
-    sudo chmod a+rw ${SITE_CONFIG}
+    touch ${SITE_CONFIG}
+    chmod a+rw ${SITE_CONFIG}
     cat > ${SITE_CONFIG} <<EOF
 <VirtualHost *:80>
     ServerName ${DOMAIN}
@@ -80,7 +80,7 @@ _apache_config() {
 </VirtualHost>
 EOF
 
-    sudo chmod a-w ${SITE_CONFIG}
+    chmod a-w ${SITE_CONFIG}
 }
 
 
@@ -94,7 +94,7 @@ _site() {
 
 
 _site_permissions() {
-    _message "Setting site permissiona"
+    _message "Setting site permissions"
     chown -R ${APACHE_USER}:${APACHE_GROUP} ${SITE_FOLDER}
     chmod -R a+r ${SITE_FOLDER}
     cd ${SITE_FOLDER}
@@ -111,7 +111,7 @@ _python_venv() {
 
 
 _mysql() {
-    _message "Instlling MySQL server (mariadb)"
+    _message "Installing MySQL server (mariadb)"
     zypper install gcc7-c++ gcc-c++ libstdc++6-devel-gcc7 python3-devel libmariadb-devel
     zypper install mariadb
 }
@@ -142,7 +142,7 @@ EOF
 
 
 _python_requirements() {
-    _message "Instlling requiremtns"
+    _message "Installing requiremtns"
 
     zypper install gcc7-c++ gcc-c++ libstdc++6-devel-gcc7 python3-devel libmariadb-devel
     zypper install zlib zlib-devel
@@ -155,7 +155,7 @@ _python_requirements() {
 
 
 _django_local_settings() {
-    _message "Creaing Django local settigns"
+    _message "Creating Django local settigns"
     # local_settings
     cat > ${SITE_FOLDER}/core/local_setting.py <<EOF
 EMAIL_USE_TLS = False
@@ -181,7 +181,7 @@ EOF
 
 
 _django_tables() {
-    _message "Creaing Django tables"
+    _message "Creating Django tables"
     cd ${SITE_FOLDER}
     for folder in ./*
     do
@@ -202,8 +202,8 @@ _django_superuser() {
 
 
 _restart_apache() {
-    _message "Restarting Apache"
-    sudo systemctl restart apache2
+    _message "Reloading Apache"
+    systemctl reload apache2
 }
 
 
