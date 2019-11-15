@@ -4,7 +4,7 @@
 DOMAIN=AI.ixioo.com
 
 SITE_FOLDER=/home/www/htdocs/AI
-SITE_CONFIG=/etc/apache2/conf.d/${DOMAIN}.conf
+SITE_CONFIG=/etc/apache2/vhosts.d/${DOMAIN}.conf
 SITE_VENV_PACKAGES_PATH=${SITE_FOLDER}/venv/lib/python3.6/site-packages
 
 DB_NAME=AI
@@ -194,7 +194,6 @@ _django_superuser() {
 
 _restart_apache() {
     _message "Restarting Apache"
-    sudo a2ensite ${DOMAIN}
     sudo systemctl restart apache2
 }
 
