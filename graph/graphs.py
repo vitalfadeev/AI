@@ -42,8 +42,8 @@ def g1(machine, x, y, color, colorset):
     return div
 
 
-def g2(batch_id, x, y, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g2(machine, x, y, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.scatter(df, x=x, y=y, color=color, marginal_y="rug", marginal_x="histogram",
@@ -53,8 +53,8 @@ def g2(batch_id, x, y, color, colorset):
     return div
 
 
-def g3(batch_id, x, y, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g3(machine, x, y, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.scatter(df, x=x, y=y, color=color, marginal_y="violin", marginal_x="box", trendline="ols",
@@ -64,8 +64,8 @@ def g3(batch_id, x, y, color, colorset):
     return div
 
 
-def g4(batch_id, x, y, z, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g4(machine, x, y, z, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.scatter_matrix(df, dimensions=[x, y, z], color=color,
@@ -75,8 +75,8 @@ def g4(batch_id, x, y, z, color, colorset):
     return div
 
 
-def g5(batch_id, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g5(machine, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.parallel_categories(df, color=color,
@@ -86,8 +86,8 @@ def g5(batch_id, color, colorset):
     return div
 
 
-def g6(batch_id, x, y, color, line_group, colorset):
-    input_model = models.BatchInput(batch_id)
+def g6(machine, x, y, color, line_group, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     # sorting data frame by name
@@ -100,8 +100,8 @@ def g6(batch_id, x, y, color, line_group, colorset):
     return div
 
 
-def g7(batch_id, x, y, colorset):
-    input_model = models.BatchInput(batch_id)
+def g7(machine, x, y, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.density_contour(df, x=x, y=y)
@@ -110,8 +110,8 @@ def g7(batch_id, x, y, colorset):
     return div
 
 
-def g8(batch_id, x, y, colorset):
-    input_model = models.BatchInput(batch_id)
+def g8(machine, x, y, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.density_heatmap(df, x=x, y=y, marginal_x="rug", marginal_y="histogram",
@@ -121,8 +121,8 @@ def g8(batch_id, x, y, colorset):
     return div
 
 
-def g9(batch_id, x, y, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g9(machine, x, y, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.histogram(df, x=x, y=y, color=color, marginal="rug", hover_data=[x, y, color],
@@ -132,8 +132,8 @@ def g9(batch_id, x, y, color, colorset):
     return div
 
 
-def g10(batch_id, x, y, z, color, colorset):
-    input_model = models.BatchInput(batch_id)
+def g10(machine, x, y, z, color, colorset):
+    input_model = machine.get_machine_data_input_lines_model()
     df = input_model.as_pandas_dataframe()
 
     fig = px.scatter_3d(df, x=x, y=y, z=z, color=color,

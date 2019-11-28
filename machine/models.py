@@ -77,9 +77,9 @@ type_mapping = {
     "TEXT_WORDS_PKN_LARGE" : (models.TextField, {}),
     "TEXT_SENTENCE"        : (models.TextField, {}),
     "TEXT_PARAGRAPH"       : (models.TextField, {}),
-    "DATE"                 : (models.DateField, {}),
-    "DATE_LARGE"           : (models.DateField, {}),
-    "TIME"                 : (models.TimeField, {}),
+    "DATE"                 : (models.TextField, {}),
+    "DATE_LARGE"           : (models.TextField, {}),
+    "TIME"                 : (models.TextField, {}),
     "DATETIME"             : (models.TextField, {}),
     "DATETIME_LARGE"       : (models.TextField, {}),
     "JSON"                 : (models.TextField, {}),
@@ -328,6 +328,11 @@ class Machine(models.Model, MachineMixin):
             "IsSolved"            : models.BooleanField(),
         }
         return MachineDataOutputLinesModelFactory( self.Machine_ID, columns, types, additional_columns )
+
+
+    def get_machine_data_input_columns( self ):
+        types = self.AnalysisSource_ColumnType
+        return list( types.keys() )
 
 
     class Meta:

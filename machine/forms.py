@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django_mysql.forms import JSONField
 
+from graph.models import Graph
 from machine.models import Machine
 
 
@@ -64,6 +65,20 @@ class MachineNNShapeForm( ModelForm ):
             # 'ParameterCNN_BatchEpochAuto',
             # 'ParameterCNN_BatchSize',
             # 'ParameterCNN_Epoch',
+        ]
+
+
+class MachineInputGraphForm( ModelForm ):
+    class Meta:
+        model = Graph
+        fields = [
+            "GraphType",
+            "ColorScaleSet",
+            "X",
+            "Y",
+            "Z",
+            "Color",
+            # "Animation_Frame",
         ]
 
 

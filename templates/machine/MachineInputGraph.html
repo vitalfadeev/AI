@@ -1,0 +1,100 @@
+{% extends 'machine/MachineLayout.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block title %} Edit machine {% endblock %}
+
+{% block main %}
+
+    <div class="row">
+
+        <div class="col s12 offset-s2  m12 offset-m2 xl12 offset-xl2">
+            <div class="section">
+
+                <form id="form-machine-edit" action="" method="POST" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    {{ form.errors }}
+
+                    <div class="row">
+                        <div class="col s3">
+                          <select class="browser-default" name="GraphType" value="{{form.GraphType.value}}">
+                            <option value="1" {% if form.GraphType.value == "1" %}selected{% endif %} >1 (points)</option>
+                            <option value="2" {% if form.GraphType.value == "2" %}selected{% endif %} >2 (points)</option>
+                            <option value="3" {% if form.GraphType.value == "3" %}selected{% endif %} >3 (points)</option>
+                            <option value="4" {% if form.GraphType.value == "4" %}selected{% endif %} >4 (grid)</option>
+                            <option value="5" {% if form.GraphType.value == "5" %}selected{% endif %} >5 (lines)</option>
+                            <option value="6" {% if form.GraphType.value == "6" %}selected{% endif %} >6</option>
+                            <option value="7" {% if form.GraphType.value == "7" %}selected{% endif %} >7 (area)</option>
+                            <option value="8" {% if form.GraphType.value == "8" %}selected{% endif %} >8 (points colored)</option>
+                            <option value="9" {% if form.GraphType.value == "9" %}selected{% endif %} >9</option>
+                            <option value="10" {% if form.GraphType.value == "10" %}selected{% endif %} >10 (3D)</option>
+                          </select>
+                        </div>
+
+                        <div class="col s3">
+                          <select class="browser-default" name="ColorScaleSet" >
+                            <option value="1" {% if form.ColorScaleSet.value == "light24" %}selected{% endif %}>light24</option>
+                            <option value="2" {% if form.ColorScaleSet.value == "pastel1" %}selected{% endif %}>pastel1</option>
+                            <option value="3" {% if form.ColorScaleSet.value == "bold" %}selected{% endif %}>bold</option>
+                            <option value="4" {% if form.ColorScaleSet.value == "inferno" %}selected{% endif %}>inferno</option>
+                            <option value="5" {% if form.ColorScaleSet.value == "GnBu" %}selected{% endif %}>GnBu</option>
+                            <option value="6" {% if form.ColorScaleSet.value == "OrRd" %}selected{% endif %} >OrRd</option>
+                            <option value="7" {% if form.ColorScaleSet.value == "amp" %}selected{% endif %} >amp</option>
+                            <option value="8" {% if form.ColorScaleSet.value == "ice" %}selected{% endif %} >ice</option>
+                            <option value="9" {% if form.ColorScaleSet.value == "rdbu" %}selected{% endif %} >rdbu</option>
+                            <option value="10" {% if form.ColorScaleSet.value == "pubu" %}selected{% endif %} >pubu</option>
+                            <option value="11" {% if form.ColorScaleSet.value == "red" %}selected{% endif %} >red</option>
+                          </select>
+                        </div>
+
+                        <div class="col s3">
+                          <select class="browser-default" name="Color">
+                            {% for column in columns %}
+                            <option value="{{column}}"  {% if form.Color.value == column %}selected{% endif %} >{{column}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s3">
+                          <select class="browser-default" name="X">
+                            {% for column in columns %}
+                            <option value="{{column}}" {% if form.X.value == column %}selected{% endif %} >{{column}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+
+                        <div class="col s3">
+                          <select class="browser-default" name="Y">
+                            {% for column in columns %}
+                            <option value="{{column}}" {% if form.Y.value == column %}selected{% endif %} >{{column}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+
+                        <div class="col s3">
+                          <select class="browser-default" name="Z">
+                            {% for column in columns %}
+                            <option value="{{column}}" {% if form.Z.value == column %}selected{% endif %} >{{column}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                      <button class="btn waves-effect waves-light" type="submit" name="action">Show
+                      </button>
+                    </div>
+
+                </form>
+
+                {{graph_div|safe}}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}

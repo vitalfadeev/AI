@@ -67,7 +67,7 @@ def two_cols(data):
 
 
 # Create your models here.
-class Graph(models.Model):
+class Graph( models.Model ):
     Graph_ID         = models.AutoField(primary_key=True)
 
     Machine_ID       = models.ForeignKey(Machine, on_delete=models.CASCADE)
@@ -78,6 +78,10 @@ class Graph(models.Model):
     X                = models.CharField(max_length=255, default='')
     Y                = models.CharField(max_length=255, default='')
     Z                = models.CharField(max_length=255, default='')
-    Color            = models.CharField(max_length=255, default='#ccc')
-    Animation_Frame  = models.CharField(max_length=255, default='')
+    Color            = models.CharField(max_length=255, default='')
+    Animation_Frame  = models.CharField(max_length=255, default='', null=True)
 
+    class Meta:
+        db_table = 'Graph'
+        verbose_name = _('Graph')
+        verbose_name_plural = _('Graphs')

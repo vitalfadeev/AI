@@ -8,17 +8,20 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.urls import resolve
 from django.utils.decorators import method_decorator
+from django.views.generic import FormView
 from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core import settings
+from graph import graphs
+from graph.models import Graph
 from machine.datainput import datatable
 from machine.loader.create import create_model_table
 from machine.models import Machine
 from team.models import Team
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
-    MachineNNShapeForm
+    MachineNNShapeForm, MachineInputGraphForm
 from machine.decorators import user_can_view_machine, user_can_edit_machine
 
 from machine.analysis.DataPreAnalyser import analyse_source_data_find_input_output
@@ -248,6 +251,79 @@ def MachineNNTensorboard( request, Machine_ID ):
 @login_required
 def MachineNNTensorboardEngine( request, Machine_ID ):
     return serve_file(settings.BASE_DIR + '/static/tensorboard/engine.html')
+
+
+
+##############################################################################3
+# Graph
+##############################################################################3
+@login_required
+def MachineInputGraph( request, Machine_ID ):
+    context = {}
+
+    #
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    #
+    try: graph = Graph.objects.get( Machine_ID=machine )
+    except Graph.DoesNotExist: graph = Graph( Machine_ID=machine )
+
+    #
+    if request.POST:
+        form = MachineInputGraphForm( request.POST, instance=graph )
+
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machine/{Machine_ID}/InputGraph")
+        else:
+            pass
+    else:
+        form = MachineInputGraphForm( instance=graph )
+
+    #
+    GraphType = graph.GraphType
+
+    try:
+        if GraphType == "1":
+            graph_div = graphs.g1(machine, graph.X, graph.Y, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "2":
+            graph_div = graphs.g2(machine, graph.X, graph.Y, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "3":
+            graph_div = graphs.g3(machine, graph.X, graph.Y, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "4":
+            graph_div = graphs.g4(machine, graph.X, graph.Y, graph.Z, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "5":
+            graph_div = graphs.g5(machine, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "6":
+            graph_div = graphs.g6(machine, graph.X, graph.Y, graph.Color, graph.Z, graph.ColorScaleSet)
+        elif GraphType == "7":
+            graph_div = graphs.g7(machine, graph.X, graph.Y, graph.ColorScaleSet)
+        elif GraphType == "8":
+            graph_div = graphs.g8(machine, graph.X, graph.Y, graph.ColorScaleSet)
+        elif GraphType == "9":
+            graph_div = graphs.g9(machine, graph.X, graph.Y, graph.Color, graph.ColorScaleSet)
+        elif GraphType == "10":
+            graph_div = graphs.g10(machine, graph.X, graph.Y, graph.Z, graph.Color, graph.ColorScaleSet)
+        else:
+            graph_div = ''
+
+    except Exception as e:
+        graph_div = """<div class="card-panel yellow lighten-5">
+                        {}
+                       </div>
+                    """.format(repr(e))
+
+    #
+    columns = machine.get_machine_data_input_columns()
+
+    context.update( locals() )
+    return render(request, 'machine/MachineInputGraph.html', context)
+
+
+
+
+
 
 
 
