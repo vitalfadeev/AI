@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.contrib.auth.models import User
@@ -264,7 +265,7 @@ class Machine(models.Model, MachineMixin):
         ('batchnormalization','batchnormalization'),
     ]
     
-    ParameterCNN_Shape                         =  models.CharField(_('Shape'), choices=SHAPE_CHOICES, max_length=50, default='softmax', null=True, blank=True)
+    ParameterCNN_Shape                         =  models.CharField(_('Shape'), max_length=400, default=str(json.dumps([(None, None, "softmax")] * 10)), null=True, blank=True)
 
     ParameterCNN_BatchEpochAuto                =  models.BooleanField(_('Batch Epoch Auto'), default=True)
     ParameterCNN_BatchSize                     =  models.PositiveIntegerField(_('Batch Size'), default=1, null=True, blank=True)

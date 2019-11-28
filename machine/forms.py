@@ -45,6 +45,28 @@ class MachineDescribeForm( ModelForm ):
         ]
 
 
+class MachineNNParametersForm( ModelForm ):
+    class Meta:
+        model = Machine
+        fields = [
+            'ParameterCNN_ShapeAuto',
+            'ParameterCNN_Loss',
+            'ParameterCNN_Optimizer',
+        ]
+
+
+
+class MachineNNShapeForm( ModelForm ):
+    class Meta:
+        model = Machine
+        fields = [
+            'ParameterCNN_Shape',
+            # 'ParameterCNN_BatchEpochAuto',
+            # 'ParameterCNN_BatchSize',
+            # 'ParameterCNN_Epoch',
+        ]
+
+
 
 #
 # class ParameterForm(ModelForm):

@@ -1,0 +1,111 @@
+{% extends 'machine/MachineLayout.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block title %} Edit machine {% endblock %}
+
+{% block main %}
+    <style>
+      #shape-table div.col,
+      #shape-table div.row {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    </style>
+
+    <div class="row">
+
+        <div class="col s12 offset-s2  m12 offset-m2 xl12 offset-xl2">
+            <div class="section">
+
+                <form id="form-cnn-shape" action="" method="POST" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    {{ form.errors }}
+
+                    {{ form.ParameterCNN_Shape.as_hidden }}
+
+                    <div id="shape-table">
+                      Shape
+
+                      <!-- 1..10 -->
+                      {% for shape in shapes %}
+                      <div class="row">
+                          <div class="input-field col s4">
+                            <input id="last_name" type="text" class="validate">
+                            <!-- <label for="last_name">Number 1..99</label> -->
+                          </div>
+                          <div class="input-field col s4">
+                            <select class="browser-default">
+                              <option value=""></option>
+                              <option value="softmax">softmax</option>
+                              <option value="elu">elu</option>
+                              <option value="selu">selu</option>
+                              <option value="softplus">softplus</option>
+                              <option value="softsign">softsign</option>
+                              <option value="relu">relu</option>
+                              <option value="tanh">tanh</option>
+                              <option value="hard_sigmoid">hard_sigmoid</option>
+                              <option value="exponential">exponential</option>
+                              <option value="linear">linear</option>
+                              <option value="dropout">dropout</option>
+                              <option value="batchnormalization">batchnormalization</option>
+                            </select>
+                          </div>
+                      </div>
+                      {% endfor %}
+
+                    </div>
+
+                    <div class="row">
+                      <button class="btn waves-effect waves-light" type="submit" name="action">Next
+                        <i class="material-icons right">send</i>
+                      </button>
+                    </div>
+
+                </form>
+
+                <script type="text/javascript">
+                  var form = document.getElementById("form-cnn-shape");
+
+                  var ParameterCNN_Shape = document.getElementById("id_ParameterCNN_Shape");
+                  var shapes = JSON.parse(ParameterCNN_Shape.value);
+
+                  var inputs = form.querySelectorAll('input[type="text"]');
+                  var selects = form.querySelectorAll('select');
+
+                  for (var i = 0, l = shapes.length; i < l; i++) {
+                    var shape = shapes[i];
+                    var shape_n = shape[1];
+                    var shape_v = shape[2];
+
+                    inputs[i].value = shape_n;
+                    selects[i].value = shape_v;
+                  }
+
+                  // Hode 1st and last input
+                  inputs[0].style.display = 'none';
+                  inputs[inputs.length-1].style.display = 'none';
+
+                  // On submit
+                  form.addEventListener('submit', function() {
+                    var shapes_new = [];
+
+                    for (var i = 0, l = shapes.length; i < l; i++) {
+                      var shape = shapes[i];
+                      shape[1] = parseInt(inputs[i].value, 10);
+                      shape[2] = selects[i].value;
+                      shapes_new.push( shape );
+                    }
+
+                    ParameterCNN_Shape.value = JSON.stringify(shapes_new);
+                  });
+                </script>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}

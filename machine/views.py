@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
@@ -13,7 +15,8 @@ from machine.datainput import datatable
 from machine.loader.create import create_model_table
 from machine.models import Machine
 from team.models import Team
-from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm
+from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
+    MachineNNShapeForm
 from machine.decorators import user_can_view_machine, user_can_edit_machine
 
 from machine.analysis.DataPreAnalyser import analyse_source_data_find_input_output
@@ -31,19 +34,22 @@ from rest_framework import mixins
 
 
 
+##############################################################################3
+# Machine
+##############################################################################3
 @login_required
 def MachineAdd( request ):
     context = {}
 
     if request.POST:
         form = MachineAddForm( request.POST, request.FILES )
-        context.update(locals())
         if form.is_valid():
             entry = form.save(commit=False)
             entry.Owner_User_ID = request.user
             entry.save()
             return HttpResponseRedirect(f"/Machine/{entry.pk}/Describe")
         else:
+            context.update( locals() )
             return render(request, 'machine/MachineAdd.html', context)
     else:
         form = MachineAddForm()
@@ -59,12 +65,12 @@ def MachineDescribe( request, Machine_ID ):
 
     if request.POST:
         form = MachineDescribeForm( request.POST, instance=machine )
-        context.update(locals())
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
-            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Main")
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Parameters")
         else:
+            context.update( locals() )
             return render(request, 'machine/MachineDescribe.html', context)
     else:
         form = MachineDescribeForm( instance=machine )
@@ -79,13 +85,13 @@ def MachineMain( request, Machine_ID ):
 
     if request.POST:
         form = MachineMainForm( request.POST, instance=machine )
-        context.update( locals() )
 
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
             return HttpResponseRedirect(f"/Machine/{entry.pk}/Main")
         else:
+            context.update( locals() )
             return render(request, 'machine/MachineMain.html', context)
     else:
         form = MachineMainForm( instance=machine )
@@ -153,6 +159,74 @@ class MachinesDatatableAjax(datatable.DTView):
         qs = qs.order_by('-DateTimeCreation')
 
         return qs
+
+
+##############################################################################3
+# NN
+##############################################################################3
+@login_required
+def MachineNNMain( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    if request.POST:
+        form = MachineMainForm( request.POST, instance=machine )
+
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Main")
+        else:
+            context.update( locals() )
+            return render(request, 'machine/MachineNNMain.html', context)
+    else:
+        form = MachineMainForm( instance=machine )
+        context.update( locals() )
+        return render(request, 'machine/MachineNNMain.html', context)
+
+
+@login_required
+def MachineNNParameters( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    if request.POST:
+        form = MachineNNParametersForm( request.POST, instance=machine )
+
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Shape")
+        else:
+            context.update( locals() )
+            return render(request, 'machine/MachineNNParameters.html', context)
+    else:
+        form = MachineNNParametersForm( instance=machine )
+        context.update( locals() )
+        return render(request, 'machine/MachineNNParameters.html', context)
+
+
+
+@login_required
+def MachineNNShape( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+    shapes = json.loads(machine.ParameterCNN_Shape)
+
+    if request.POST:
+        form = MachineNNShapeForm( request.POST, instance=machine )
+
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Shape")
+        else:
+            context.update( locals() )
+            return render(request, 'machine/MachineNNShape.html', context)
+    else:
+        form = MachineNNShapeForm( instance=machine )
+        context.update( locals() )
+        return render(request, 'machine/MachineNNShape.html', context)
 
 
 
