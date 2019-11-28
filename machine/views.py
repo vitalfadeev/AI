@@ -42,7 +42,7 @@ def MachineAdd( request ):
             entry = form.save(commit=False)
             entry.Owner_User_ID = request.user
             entry.save()
-            return HttpResponseRedirect(f"/Machine/{entry.pk}/Edit")
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/Describe")
         else:
             return render(request, 'machine/MachineAdd.html', context)
     else:
