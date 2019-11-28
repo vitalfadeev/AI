@@ -1,0 +1,27 @@
+{% extends 'machine/MachineLayout.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block title %} Tensorboard {% endblock %}
+
+{% block main %}
+
+<style>
+#tf-frame {
+    height: 1000px;
+    width: 100%;
+}
+</style>
+
+<div class="row">
+
+        <div class="col s12 offset-s1  m12 offset-m1  xl12 offset-xl1">
+        <div class="section">
+
+            <iframe src="/Machine/{{Machine_ID}}/NN/Tensorboard-engine" frameborder="0" scrolling="no" id="tf-frame" />
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock main %}

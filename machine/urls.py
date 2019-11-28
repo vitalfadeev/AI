@@ -14,4 +14,6 @@ urlpatterns = [
     path( 'Machine/<int:Machine_ID>/NN/Main', views.MachineNNMain ),
     path( 'Machine/<int:Machine_ID>/NN/Parameters', views.MachineNNParameters ),
     path( 'Machine/<int:Machine_ID>/NN/Shape', views.MachineNNShape ),
+    path( 'Machine/<int:Machine_ID>/NN/Tensorboard', views.MachineNNTensorboard ),
+    path( 'Machine/<int:Machine_ID>/NN/Tensorboard-engine', views.MachineNNTensorboardEngine ),
 ]

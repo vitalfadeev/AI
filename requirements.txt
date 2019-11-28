@@ -37,7 +37,8 @@ pandas
 numpy
 
 # for TensorBoard
-tensorflow==1.13.1
+#tensorflow==1.13.1
+tensorflow==2.0.0
 
 # for Graph
 plotly

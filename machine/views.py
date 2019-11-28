@@ -1,16 +1,18 @@
 import json
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.urls import resolve
 from django.utils.decorators import method_decorator
 from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from core import settings
 from machine.datainput import datatable
 from machine.loader.create import create_model_table
 from machine.models import Machine
@@ -32,6 +34,13 @@ from django.db import connection
 from rest_framework import generics, viewsets
 from rest_framework import mixins
 
+
+##############################################################################3
+# Tools
+##############################################################################3
+def serve_file(filename):
+    image_data = open(filename, "rb").read()
+    return HttpResponse(image_data, content_type="text/html")
 
 
 ##############################################################################3
@@ -229,8 +238,16 @@ def MachineNNShape( request, Machine_ID ):
         return render(request, 'machine/MachineNNShape.html', context)
 
 
+@login_required
+def MachineNNTensorboard( request, Machine_ID ):
+    context = {}
+    context.update( locals() )
+    return render(request, 'machine/MachineNNTensorboard.html', context)
 
 
+@login_required
+def MachineNNTensorboardEngine( request, Machine_ID ):
+    return serve_file(settings.BASE_DIR + '/static/tensorboard/engine.html')
 
 
 
