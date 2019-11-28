@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} List | Teams {% endblock %}
+
+{% block content %}
+<div class="z-depth-1">
+    <div class="nav-wrapper bf-grey-1 col l12">
+        <ul id="A1" class="left">
+            <li><a href="/team/">My Teams</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="col l12 m12 s12 white black-text z-depth-5">
+    <table class="">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Admins</th>
+                <th>Members</th>
+                <th class="center">Delete</th>
+                <th class="center">Edit</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for team in teams %}
+            <tr>
+                <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td>{% for admin in team.admins.all %}{{ admin }}&nbsp; {% endfor %}</td>
+                <td>{% for member in team.members.all %}{{ member }}&nbsp;{% endfor %}</td>
+                <td class="center"><a class="modal-trigger" href="#modal-delete-team{{team.id}}">Delete</a></td>
+                <td class="center"><a href="/team/{{ team.id }}/edit/">Edit</a></td>
+            </tr>
+
+            <!-- Modal Structure -->
+            <div id="modal-delete-team{{team.id}}" class="modal">
+                <div class="modal-content">
+                <h4>Are you sure?</h4>
+                <p>This team will be deleted!</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/team/{{ team.id }}/delete/" class="modal-close btn-flat">Delete</a>
+                    <a href="#!" class="modal-close btn-flat">Cancel</a>
+                </div>
+            </div>
+
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+        
+
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <br>
+            <a class="waves-effect waves-light btn" href="/team/add/">New Team</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

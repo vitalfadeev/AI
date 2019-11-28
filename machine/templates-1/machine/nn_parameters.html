@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+    {% include "machine/tab_header.html" %}
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="#">NN Parameters</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <form action="." method="post">{% csrf_token %}
+        <div class="col l12 m12 s12 white black-text z-depth-5">
+            <div class="col l6 m6">
+                <div class="col l12 m12 s12 white black-text">
+                    <br> 
+                    <div class="col l2 m2">Loss</div>
+                    <div class="col l10 m10">            
+                        {% for radio in form.parameterCNN_Loss %}
+                        <label>
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                        {% endfor %}    
+                        <hr>
+                    </div>
+                </div>
+                <div class="col l12 m12 s12 white black-text">
+                    <div class="col l2 m2">Optimizer</div>
+                    <div class="col l10 m10">            
+                        {% for radio in form.parameterCNN_Optimizer %}
+                        <label>
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col l6 m6">
+                <div class="col l12 m12 s12 white black-text">
+                        <div class="col l3 m3 valign-center"><p>shape</p></div>
+                        <div class="col l9 m9 valign-center">
+                            {{ form.parameterCNN_Shape }}
+                        </div>
+                </div>
+
+                <div class="col l12 m12 s12 white black-text">
+                    <div class="col l3 m3 valign-center"><p>Batch size</p></div>
+                    <div class="col l9 m9 valign-center">
+                        {{ form.parameterCNN_BatchSize }}
+                    </div>
+                </div>
+
+                <div class="col l12 m12 s12 white black-text">
+                    <div class="col l3 m3 valign-center"><p>epoch</p></div>
+                    <div class="col l9 m9 valign-center">
+                        {{ form.parameterCNN_Epoch }}
+                    </div>
+                </div>                
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field col m12 valign-wrapper">
+                    <button type="submit" class="waves-effect waves-light btn">SAVE</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

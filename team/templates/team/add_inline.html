@@ -1,0 +1,29 @@
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="#">Add Team</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="col l12 m12 s12 white black-text z-depth-5">
+        
+        <form id="modalSubmit" action="" method="POST">{% csrf_token %}
+
+            <div class="col l12 m12 s12">
+                <div class="input-field col l5 m12 s12">
+                    {{ form.name }}
+                    <label for="name">Team Name</label>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field col m12 valign-wrapper">
+                    <input type="button" name="modal-submit" class="btn green" value="Create" onClick="submitModal()" />
+                </div>
+            </div>
+
+        </form>                    
+
+    </div>

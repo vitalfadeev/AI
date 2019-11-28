@@ -1,0 +1,52 @@
+{% extends 'base_public.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+    <div class="row bf-main-blue-5 white-text">
+        <div class="col l12 m12 s12 bf-main-blue-5">
+            <h5 class="header">Build Learning Machines</h5>
+            <div>
+                BF help you to builds intelligent machines in minutes instead of days <br>
+                Machines built can be applied easily to solve complex global challenges, <br>
+                and  they can be easily interconnected to your company data flow,  and provide in return the real time intelligent synthesis your need <br>
+                BF leverages the latest pioneering discoveries in neuroscience to build more complete, whole-brain AI systems that you can trust 
+            </div>
+
+            <div class="row hide-on-med-and-up">
+                <div class="col s12 m7">
+                <br>
+                <div class="card">
+                    <div class="card-content bf-main-blue-5">
+                        <div class="card-image">
+                            <img src="{% static 'img/img1.png' %}">
+                        </div>
+                        <h5>How it work ?</h5>
+                        <p>The Machine do not need programming, it just learn from many examples.</p>
+                        <p>The machine read some obervation data (numbers) and give some results (numbers)</p>
+                        <p>Please find here a lot of example of Learning machine</p>
+                        <p>If you have already the data (observations and results), you can start to build your machine here</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="card horizontal z-depth-0 hide-on-small-only">
+                <div class="card-image bf-main-blue-5 valign-wrapper">
+                    <img src="{% static 'img/img1.png' %}">
+                </div>
+                <div class="card-stacked bf-main-blue-5">
+                    <div class="card-content">
+                        <h5>How it work ?</h5>
+                        <p>The Machine do not need programming, it just learn from many examples.</p>
+                        <p>The machine read some obervation data (numbers) and give some results (numbers)</p>
+                        <p>Please find here a lot of example of Learning machine</p>
+                        <p>If you have already the data (observations and results), you can start to build your machine here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

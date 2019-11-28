@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="#">Add New Machine</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col l12 m12 s12 white black-text z-depth-5">
+        <form class="form-machine-add" action="." method="POST" enctype="multipart/form-data"> {% csrf_token %}
+
+            {{ form.errors }}
+
+            <div class="col l12 m12 s12">
+                <div class="input-field col l6 m6">
+                    {{ form.name }}
+                    <label for="name">Project Name</label>
+                </div>
+            </div>
+            <div class="col l12 m12 s12">
+                    <div class="input-field inline bf-team-selected-list">
+                        {{ form.team }}
+                    </div>
+                    <a href="#modal-add-team" class="modal-trigger">Create New Team</a>
+            </div>
+            <div class="col l12 m12 s12">
+                <div class="input-field col l6 m6">
+                    {{ form.desc }}
+                    <label for="description">Description</label>
+                </div>
+            </div>
+            <!--
+            <div class="col l12 m12 s12">
+                <div class="input-field col m12 valign-wrapper">
+                    <a href="#" class="valign-wrapper">Machine name here</a>
+                </div>
+            </div>
+            -->
+            <div class="col l12 m12 s12">
+                <div class="input-field col m12 valign-wrapper">
+                    <div class="row">
+                        <div class="col 12">
+                            <p>
+                                <label class="i-project-is-public">
+                                    {{ form.is_public }}
+                                    <span>Make this project public</span><br>
+                                    <note>
+                                        Waive all copyright and related rights. Others may freely build upon,<br>
+                                        enhance and reuse the works for any purposes without restriction under copyright or database law.</note>
+                                </label>
+                            </p>
+                            <br>
+                            <span class="i-machine-option-list">
+
+                            <p>
+                            <label>
+                                {{ form.datasource_is_public }}
+                                <span>Data source is public</span>
+                            </label>
+                            </p>
+                            <p>
+                            <label>
+                                {{ form.datasource_sample_only_public }}
+                                <span>Data source sample only public</span>
+                            </label>
+                            </p>
+                            <p>
+                            <label>
+                                {{ form.datasource_is_private }}
+                                <span>Data source is private</span>
+                            </label>
+                            </p>
+
+                            </span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="file-field input-field col l6 m6">
+                    <div class="btn">
+                    <span>File</span>
+                    {{ form.input_file }}
+                    </div>
+                    <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12">
+                <div class="input-field col m12 valign-wrapper">
+                    <input type="submit" value="Next" class="btn green">
+                </div>
+            </div>
+
+        </form>                    
+
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal-add-team" class="modal bf-modal-team-create">
+        <div class="modal-content no-padding">
+            <div data-inline-modal="/team/add/inline/"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  {% include 'menu-vertical-main.html' %}
+
+  <main>
+    <div class="container">
+
+      {% block main %}{% endblock main %}
+
+    </div>
+  </main>
+
+{% endblock content %}

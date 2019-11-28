@@ -1,0 +1,60 @@
+# for precompiled tensorflow
+wheel
+
+# django
+django==2.2.4
+
+# for auth
+django-allauth==0.39.1
+
+# for addClass in templates
+django-widget-tweaks==1.4.5
+
+# for materializecss
+django-material==1.5.8
+
+# for datatables
+django-datatables-view
+django-datatable-view  # included for: No module named 'datatableview'
+
+# for export csv, xls
+django-queryset-csv
+django-excel-response
+
+# Access-Control-Allow-Origin
+django-cors-headers
+
+# for save to SQL
+mysqlclient
+SQLAlchemy
+
+# for JSON in MYSQL & SQLite
+jsonfield
+
+# for load xls, csv and save to SQL
+xlrd
+pandas
+numpy
+
+# for TensorBoard
+tensorflow==1.13.1
+
+# for Graph
+plotly
+statsmodels
+
+# This part is for temporary Heroku support
+gunicorn
+git+https://github.com/serkanaltuntas/django-heroku
+
+#
+django-extensions
+djangorestframework==3.10.3
+django-mysql==3.2.0
+
+# import csv
+django-pandas
+
+#
+pytest
+

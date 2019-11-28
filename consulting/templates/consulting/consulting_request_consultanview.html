@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  {% endblock %}
+
+{% block content %}
+
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="#">Consulting View</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col l12 m12 s12 white black-text z-depth-5">
+        <table class="i-table highlight">
+            <tbody>
+                <tr>
+                    <td class="">Description</td>
+                    <td class="">
+                    {{ consulting_request.request }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">File(s)</td>
+                    <td class="">
+                    {% for item in consulting_request.get_files %}{{ item }} {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">Machine Name</td>
+                    <td class="">
+                    {{ consulting_request.related_machine }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">Team Name</td>
+                    <td class="">{{ consulting_request.team }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="col l12">&nbsp;</div>
+
+    {% if current_subpage == 'consulting' %}
+        <!-- Sub Nav - Messages -->
+        <div class="z-depth-1">
+            <div class="nav-wrapper bf-grey-1 col l12">
+                <ul id="A1" class="left">
+                    <li><a href="#">Message Received</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>File</th>
+                        <th class="center">Reply</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for message in messages_received %}
+                    <tr>
+                        <td>{{ message.created_date }}</td>
+                        <td><span data-name="{{ message.created_by }}" data-user-id="{{ message.created_by.id }}">{{ message.created_by }}</span></td>
+                        <td>{{ message.message }}</td>
+                        <td>{{ message.message_file }}</td>
+                        <td class="center i-reply"><a href="/message/{{ message.id }}/reply/">Reply</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="row i-reply-area hide">
+                <div class="col l12">
+                        <br> <br>
+                        <form action="#">
+                        <div class="input-field col l5 m6 s12">
+                            <input id="message" type="text" class="validate">
+                            <label for="message">Message</label>
+                        </div>
+                        <div class="file-field input-field col l3 m3 s12">
+                            <div class="btn">
+                            <span>File</span>
+                            <input type="file">
+                            </div>
+                            <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                        <div class="input-field col l4 m2 s12">
+                            <a class="btn green col l12 m12 s12">Send to <span class="i-send-username"></span></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+    {% if current_subpage == 'owner' %}
+        <!-- Sub Nav - Messages -->
+        <div class="z-depth-1">
+            <div class="nav-wrapper bf-grey-1 no-padding col l12">
+                <ul id="A1" class="left">
+                    <li><a href="#">Consultant Message Received</a></li>
+                </ul>
+                <ul class="tabs no-padding">
+                    <li class="tab col s3"><a href="#consultant1">Consultant 1</a></li>
+                    <li class="tab col s3"><a href="#consultant2">Consultant 2</a></li>
+                    <li class="tab col s3"><a href="#consultant3">Consultant 3</a></li>
+                    <li class="tab col s3"><a href="#consultant4">Consultant 4</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="consultant1" class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>File</th>
+                        <th class="center">Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Date Here</td>
+                        <td>Consultant 1</span></td>
+                        <td>Message here...</td>
+                        <td>File here!</td>
+                        <td class="center"><a href="#!/message/0000000/reply/">Reply</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="consultant2" class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>File</th>
+                        <th class="center">Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Date Here</td>
+                        <td>Consultant 2</span></td>
+                        <td>Message here...</td>
+                        <td>File here!</td>
+                        <td class="center"><a href="#!/message/0000000/reply/">Reply</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="consultant3" class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>File</th>
+                        <th class="center">Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Date Here</td>
+                        <td>Consultant 3</span></td>
+                        <td>Message here...</td>
+                        <td>File here!</td>
+                        <td class="center"><a href="#!/message/0000000/reply/">Reply</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="consultant4" class="col l12 m12 s12 white bf-mb-20 z-depth-5">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>File</th>
+                        <th class="center">Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Date Here</td>
+                        <td>Consultant 4</span></td>
+                        <td>Message here...</td>
+                        <td>File here!</td>
+                        <td class="center"><a href="#!/message/0000000/reply/">Reply</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+
+    {% if current_subpage == 'consulting' or current_subpage == 'owner' %}
+        <div class="z-depth-1">
+            <div class="nav-wrapper bf-grey-1 col l12">
+                <ul id="A1" class="left">
+                    <li><a href="#">Contract</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col l12 m12 s12 white z-depth-5 bf-mb-20 bf-table-outer">
+            <table class="i-message-received">
+                <thead>
+                    <tr>
+                        <th>Creatin Date</th>
+                        <th>Team</th>
+                        <th>Description</th>
+                        <th>File(s)</th>
+                        <th>Machine</th>
+                        <th>Status Request</th>
+                        <th>Is Status Waiting Consultant Approval?</th>
+                        <th>Waiting Consultant Approval Time</th>
+                        <th>Is Status Contract?</th>
+                        <th>Contract Start Time</th>
+                        <th>Contract Status</th>
+                        <th>Contract End Time</th>
+                        <th>Consultant</th>
+                        <th>Amount</th>
+                        <th>Bid</th>
+                        <th>Approve</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                        <td>XXXXXXXXXXX</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,114 @@
+<header>
+
+  <style>
+    #sidenav-left li {
+      width: 100%;
+    }
+  </style>
+
+  <ul id="sidenav-left" class="sidenav sidenav-fixed">
+
+    <li class="logo"><a href="/dashboard" class="logo-container"><i class="material-icons left">spa</i></a></li>
+    <li>
+      <ul class="collapsible collapsible-accordion">
+        <li class="bold waves-effect">
+          <a class="collapsible-header">My Messages<i class="material-icons">filter_drama</i></a>
+          <div class="collapsible-body">
+              <ul>
+                  <li><a href="/MessagesReceived" source="Users.Messages">Messages Received</a></li>
+                  <li><a href="/MessagesSent" source="Users.Messages">Messages</a></li>
+              </ul>
+          </div>
+        </li>
+
+        <li class="bold waves-effect">
+          <a class="collapsible-header">My Machines<i class="material-icons">filter_drama</i></a>
+          <div class="collapsible-body">
+              <ul>
+                  <li><a href="/Machine/Add" source="Machines - List-New">Add Machine</a></li>
+                  <li><a href="/Machines" source="Machines - List-New.Private-List-Machines">My Machines</a></li>
+                  <li><a href="/MyWorks" source="Work.ListWorks">ListWorks</a></li>
+              </ul>
+          </div>
+        </li>
+
+        <li class="bold waves-effect">
+          <a class="collapsible-header">Consulting<i class="material-icons">filter_drama</i></a>
+          <div class="collapsible-body">
+              <ul>
+                  <li><a href="/MyConsultingRequest" source="Consulting.MyConsultingRequests">My Requests</a></li>
+                  <li><a href="/AllConsultingRequests" source="Consulting.AllConsultingRequests">Open for bidding</a></li>
+              </ul>
+          </div>
+        </li>
+
+        <li class="bold waves-effect">
+          <a class="collapsible-header">Marketplace<i class="material-icons">filter_drama</i></a>
+          <div class="collapsible-body">
+              <ul>
+                  <li><a href="/Machines" source="Machines - List-New.Public-List-Machines">Machines</a></li>
+                  <li><a href="/MarketPlace/Datasets" source="ApiMArket.ListMachineForCopy">Dataset</a></li>
+                  <li><a href="/MarketPlace/Machines" source="ApiMArket.ListMachineForCopy">Brain</a></li>
+                  <li><a href="/MarketPlace/API" source="ApiMArket.ListAPIPublic">API</a></li>
+              </ul>
+          </div>
+        </li>
+
+        <li class="bold waves-effect">
+          <a class="collapsible-header">Admin<i class="material-icons">filter_drama</i></a>
+          <div class="collapsible-body">
+              <ul>
+                  <li><a href="/MyProfile" source="Users.My Profile">My Profile</a></li>
+                  <li><a href="/MyTeams" source="Users.My Teams">My Teams</a></li>
+                  <li><a href="#" source="Users.My Teams">Teams Members</a></li>
+                  <li><a href="/MyAccounting" source="ApiMArket.MyBilling">Accounting</a></li>
+              </ul>
+          </div>
+        </li>
+
+  </ul>
+
+</header>
+
+<!-- Select active item -->
+<script type="text/javascript">
+    function findLinkByLocation( localtion ) {
+        var nav = document.getElementById("sidenav-left");
+        var links = nav.getElementsByTagName("a");
+
+        for (var i = 0, l = links.length; i < l; i++) {
+            var link = links[i];
+
+            if (link.href == location) {
+                return link;
+            }
+
+        }
+    }
+
+    var link = findLinkByLocation( window.location );
+
+    if (link) {
+        var li2 = link.parentNode;
+        var li1 = li2.parentNode.parentNode.parentNode;
+
+        li1.className = li1.className + " active";
+        li2.className = li2.className + " active";
+    }
+</script>
+
+
+<!-- Material UI -->
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.collapsible');
+    var instances = M.Collapsible.init(elems, {});
+  });
+</script>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+    <div class="z-depth-5 white black-text">
+        View works will be here...
+    </div>
+    {% else %}
+    {% endif %}
+
+{% endblock %}

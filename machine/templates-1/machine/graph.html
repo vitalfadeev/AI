@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+{% block title %} Sign in {% endblock %}
+
+{% block content %}
+    {% include "machine/tab_header.html" %}
+    <div class="z-depth-1">
+        <div class="nav-wrapper bf-grey-1 col l12">
+            <ul id="A1" class="left">
+                <li><a href="#">Graph</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col l12 m12 s12 white black-text z-depth-5 center">
+            <table>
+                <thead>
+                    <tr>
+                        <th>GraphType</th>
+                        <th>Color Scale Set</th>
+                        <th>X=C1</th>
+                        <th>Y=C2</th>
+                        <th>Z=C3</th>
+                        <th>color=C4</th>
+                        <th>Animation_Frame=C5</th>
+                    </tr>
+                </thead>
+        
+                <!--
+                <tbody>
+                    <tr>
+                        <td>Type 1</td>
+                        <td>abv</td>
+                        <td>red</td>
+                        <td>green</td>
+                        <td>blue</td>
+                        <td>yellow</td>
+                        <td>Animation here</td>
+                    </tr>
+                    <tr>
+                        <td>Type 1</td>
+                        <td>abv</td>
+                        <td>red</td>
+                        <td>green</td>
+                        <td>blue</td>
+                        <td>yellow</td>
+                        <td>Animation here</td>
+                    </tr>
+                    <tr>
+                        <td>Type 1</td>
+                        <td>abv</td>
+                        <td>red</td>
+                        <td>green</td>
+                        <td>blue</td>
+                        <td>yellow</td>
+                        <td>Animation here</td>
+                    </tr>
+                </tbody>
+                -->
+            </table>
+            <br>
+            <a href="/machine/private/" class="waves-effect waves-light btn left">Next</a>
+            <br> <br>
+    </div>
+
+{% endblock %}
