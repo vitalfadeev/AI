@@ -1,0 +1,61 @@
+{% extends 'dashboard/DashboardLayout.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block title %} Edit machine {% endblock %}
+
+{% block main %}
+
+    <div class="row">
+
+        <div class="col s12 offset-s2  m12 offset-m2 xl12 offset-xl2">
+            <div class="section">
+
+                <!-- Machine Input Data -->
+                <table id="machines-table" data-ajax_url="/Machines/datatable-ajax" data-datatables_dom="lfrpti" class="striped highlight">
+
+                    <colgroup>
+                      <col width="0" class=""/>
+                      <col width="0" />
+                      <col width="0" />
+                      <col width="0" />
+                      <col width="0" />
+                      <col width="0" />
+                      <col width="0" />
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>CreationDate</th>
+                        <th>Company</th>
+                        <th>ProjectName</th>
+                        <th>Description</th>
+                        <th>Names of columns input</th>
+                        <th>Names of columns output</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <script type="text/javascript">
+                $(document).ready(function() {
+                    $("#machines-table").on('click', function(e) {
+                        if (e.target.tagName == 'TD') {
+                            var tr = e.target.parentNode;
+                            var td = tr.firstChild;
+                            var Machine_ID = td.innerHTML;
+                            window.location.href = '/Machine/' + Machine_ID + '/Main';
+                        }
+                    });
+                });
+                </script>
+
+                {% include "datatables.html" with table="#machines-table" page_length=5 %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}

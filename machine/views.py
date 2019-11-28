@@ -108,6 +108,54 @@ class MachineDatatableAjax(datatable.DTView):
         return super().get(request)
 
 
+def Machines(request):
+    machines = Machine.objects.filter(Owner_User_ID=request.user).order_by('-DateTimeCreation')
+    context = {}
+    context.update( locals() )
+    return render(request, 'machine/Machines.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class MachinesDatatableAjax(datatable.DTView):
+    model = Machine
+    columns = [
+        'Machine_ID',
+        'DateTimeCreation',
+        'Owner_Team_ID',
+        'Project_Name',
+        'Project_Description',
+        'AnalysisSource_ColumnsNameInput',
+        'AnalysisSource_ColumnsNameOutput',
+    ]
+    order_columns = ['Machine_ID', 'DateTimeCreation', 'Project_Name']
+
+    def get(self, request):
+        self.request = request
+        return super().get(request)
+
+
+    def filter_queryset(self, qs):
+        from django.db.models import Q
+
+        # my only
+        qs = qs.filter(Owner_User_ID=self.request.user)
+
+        # search
+        sSearch = self.request.GET.get('sSearch', None)
+
+        if sSearch:
+            qs = qs.filter(
+                Q(Project_Name__istartswith=sSearch) |
+                Q(Project_Description__istartswith=sSearch)
+            )
+
+        # last at top
+        qs = qs.order_by('-DateTimeCreation')
+
+        return qs
+
+
+
 
 
 
