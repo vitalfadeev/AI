@@ -94,11 +94,14 @@ def load_to_dataframe( url: str, file_handle: io.FileIO = None ):
     if ext_lower == ".xls":
         dataframe = pd.read_excel( src )
 
+    elif ext_lower == ".xlsx":
+        dataframe = pd.read_excel( src )
+
     elif ext_lower == ".csv":
         dataframe = pd.read_csv( src )
 
     else:
-        raise ValidationError( f".xls, .csv only! Unsupported extensoin: {ext_lower}: (in file '{filename}')" )
+        raise ValidationError( f".xls, .xlsx, .csv only! Unsupported extensoin: {ext_lower}: (in file '{filename}')" )
 
     return dataframe
 
