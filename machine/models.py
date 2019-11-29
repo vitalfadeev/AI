@@ -192,8 +192,8 @@ class Machine(models.Model, MachineMixin):
     AnalysisSource_ColumnsNameInput             =  JSONField(default=list, blank=True)
     AnalysisSource_ColumnsNameOutput            =  JSONField(default=list, blank=True)
     AnalysisSource_ColumnType                   =  JSONField(default=list)
-    AnalysisSource_Errors                       =  JSONField(default=dict)
-    AnalysisSource_Warnings                     =  JSONField(default=dict)
+    AnalysisSource_Errors                       =  JSONField(default=dict, blank=True)
+    AnalysisSource_Warnings                     =  JSONField(default=dict, blank=True)
     AnalysisSource_ColumnsMissingPercentage     =  JSONField(default=dict)
     AnalysisSource_ListMaxSize                  =  JSONField(default=dict)
 
