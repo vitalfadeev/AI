@@ -121,7 +121,7 @@ class MachineDatatableAjax(datatable.DTView):
         machine = get_object_or_404( Machine, pk=Machine_ID )
 
         self.model = machine.get_machine_data_input_lines_model()
-        self.columns = self.model.get_field_names(without_pk=True)
+        self.columns = list( machine.AnalysisSource_ColumnType.keys() )
         self.order_columns = self.columns
         return super().get(request)
 
