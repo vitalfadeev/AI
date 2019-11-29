@@ -212,3 +212,14 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # AUTH_PROFILE_MODULE = 'user.User'
 
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 1,
+        }
+    },
+]
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'

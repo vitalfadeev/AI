@@ -231,7 +231,7 @@ def MachineNNShape( request, Machine_ID ):
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
-            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Shape")
+            return HttpResponseRedirect(f"/Machines")
         else:
             context.update( locals() )
             return render(request, 'machine/MachineNNShape.html', context)
