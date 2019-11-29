@@ -265,7 +265,7 @@ class Machine(models.Model, MachineMixin):
         ('batchnormalization','batchnormalization'),
     ]
     
-    ParameterCNN_Shape                         =  models.CharField(_('Shape'), max_length=400, default=str(json.dumps([(None, None, "softmax")] * 10)), null=True, blank=True)
+    ParameterCNN_Shape                         =  models.CharField(_('Shape'), max_length=400, default=str([]), null=True, blank=True)
 
     ParameterCNN_BatchEpochAuto                =  models.BooleanField(_('Batch Epoch Auto'), default=True)
     ParameterCNN_BatchSize                     =  models.PositiveIntegerField(_('Batch Size'), default=1, null=True, blank=True)

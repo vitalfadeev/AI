@@ -223,7 +223,7 @@ def MachineNNParameters( request, Machine_ID ):
 def MachineNNShape( request, Machine_ID ):
     context = {}
     machine = get_object_or_404( Machine, pk=Machine_ID )
-    shapes = json.loads(machine.ParameterCNN_Shape)
+    shapes = range(10)
 
     if request.POST:
         form = MachineNNShapeForm( request.POST, instance=machine )
@@ -231,7 +231,8 @@ def MachineNNShape( request, Machine_ID ):
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
-            return HttpResponseRedirect(f"/Machines")
+            return HttpResponseRedirect(f"/Machine/{Machine_ID}/NN/Shape")
+            # return HttpResponseRedirect(f"/Machines")
         else:
             context.update( locals() )
             return render(request, 'machine/MachineNNShape.html', context)

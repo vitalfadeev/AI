@@ -27,37 +27,80 @@
 
                     {{ form.ParameterCNN_Shape.as_hidden }}
 
-                    <div id="shape-table">
-                      Shape
+                    <table id="shape-table">
+                        <colgroup>
+                          <col width="50"/>
+                          <col />
+                          <col />
+                          <col width="50"/>
+                          <col width="50"/>
+                        </colgroup>
 
-                      <!-- 1..10 -->
-                      {% for shape in shapes %}
-                      <div class="row">
-                          <div class="input-field col s4">
-                            <input id="last_name" type="text" class="validate">
-                            <!-- <label for="last_name">Number 1..99</label> -->
-                          </div>
-                          <div class="input-field col s4">
-                            <select class="browser-default">
-                              <option value=""></option>
-                              <option value="softmax">softmax</option>
-                              <option value="elu">elu</option>
-                              <option value="selu">selu</option>
-                              <option value="softplus">softplus</option>
-                              <option value="softsign">softsign</option>
-                              <option value="relu">relu</option>
-                              <option value="tanh">tanh</option>
-                              <option value="hard_sigmoid">hard_sigmoid</option>
-                              <option value="exponential">exponential</option>
-                              <option value="linear">linear</option>
-                              <option value="dropout">dropout</option>
-                              <option value="batchnormalization">batchnormalization</option>
-                            </select>
-                          </div>
-                      </div>
-                      {% endfor %}
+                        <thead>
+                          <tr>
+                            <th>Layer Number</th>
+                            <th>Neuron Percent</th>
+                            <th>Layer Type</th>
+                            <th>Dropout</th>
+                            <th>Batch Normalization</th>
+                          </tr>
+                        </thead>
 
-                    </div>
+                        <tbody>
+
+                          <!-- 1..10 -->
+                          {% for shape in shapes %}
+
+                          <tr>
+
+                              <td class="center">
+                                {{ forloop.counter	}}
+                              </td>
+
+                              <td>
+                                <input id="last_name" type="text" class="validate">
+                                <!-- <label for="last_name">Number 1..99</label> -->
+                              </td>
+
+                              <td>
+                                <select class="browser-default">
+                                  <option value=""></option>
+                                  <option value="softmax">softmax</option>
+                                  <option value="elu">elu</option>
+                                  <option value="selu">selu</option>
+                                  <option value="softplus">softplus</option>
+                                  <option value="softsign">softsign</option>
+                                  <option value="relu">relu</option>
+                                  <option value="tanh">tanh</option>
+                                  <option value="hard_sigmoid">hard_sigmoid</option>
+                                  <option value="exponential">exponential</option>
+                                  <option value="linear">linear</option>
+                                  <option value="dropout">dropout</option>
+                                  <option value="batchnormalization">batchnormalization</option>
+                                </select>
+                              </td>
+
+                              <td class="center">
+                                <label>
+                                  <input type="checkbox" />
+                                  <span></span>
+                                </label>
+                              </td>
+
+                              <td class="center">
+                                <label>
+                                  <input type="checkbox" />
+                                  <span></span>
+                                </label>
+                              </td>
+
+                          </tr>
+
+                          {% endfor %}
+
+                        </tbody>
+
+                    </table>
 
                     <div class="row">
                       <button class="btn waves-effect waves-light" type="submit" name="action">Next
@@ -67,37 +110,54 @@
 
                 </form>
 
+                <!-- Fill inputs -->
                 <script type="text/javascript">
                   var form = document.getElementById("form-cnn-shape");
-
                   var ParameterCNN_Shape = document.getElementById("id_ParameterCNN_Shape");
-                  var shapes = JSON.parse(ParameterCNN_Shape.value);
+                  var given = JSON.parse(ParameterCNN_Shape.value);
 
-                  var inputs = form.querySelectorAll('input[type="text"]');
-                  var selects = form.querySelectorAll('select');
+                  var table = document.getElementById("shape-table");
+                  var shapes = table.querySelectorAll('tbody tr');
 
                   for (var i = 0, l = shapes.length; i < l; i++) {
                     var shape = shapes[i];
-                    var shape_n = shape[1];
-                    var shape_v = shape[2];
+                    var cells = shape.querySelectorAll('td');
 
-                    inputs[i].value = shape_n;
-                    selects[i].value = shape_v;
+                    if (given && i < given.length && given[i].length == 4) {
+                      var values = given[i];
+
+                      var NeuronPercent      = values[0];
+                      var LayerType          = values[1];
+                      var Dropout            = values[2];
+                      var BatchNormalization = values[3];
+
+                      cells[1].querySelector('input').value   = NeuronPercent;
+                      cells[2].querySelector('select').value  = LayerType;
+                      cells[3].querySelector('input').checked = Dropout;
+                      cells[4].querySelector('input').checked = BatchNormalization;
+                    }
                   }
+                </script>
 
-                  // Hode 1st and last input
-                  inputs[0].style.display = 'none';
-                  inputs[inputs.length-1].style.display = 'none';
-
-                  // On submit
+                <!-- On submit -->
+                <script type="text/javascript">
                   form.addEventListener('submit', function() {
+                    var form = document.getElementById("form-cnn-shape");
+                    var ParameterCNN_Shape = document.getElementById("id_ParameterCNN_Shape");
+
                     var shapes_new = [];
 
                     for (var i = 0, l = shapes.length; i < l; i++) {
                       var shape = shapes[i];
-                      shape[1] = parseInt(inputs[i].value, 10);
-                      shape[2] = selects[i].value;
-                      shapes_new.push( shape );
+                      var cells = shape.querySelectorAll('td');
+
+                      var NeuronPercent      = cells[1].querySelector('input').value;
+                      var LayerType          = cells[2].querySelector('select').value;
+                      var Dropout            = cells[3].querySelector('input').checked;
+                      var BatchNormalization = cells[4].querySelector('input').checked;
+
+                      if (NeuronPercent)
+                        shapes_new.push( [NeuronPercent, LayerType, Dropout, BatchNormalization] )
                     }
 
                     ParameterCNN_Shape.value = JSON.stringify(shapes_new);
