@@ -7,7 +7,6 @@ __pycache__/
 /core/local_setting.py
 /media/*
 /media/machine/
-/tf-logs/
 /venv/*
 
 cote/__pycache__/
