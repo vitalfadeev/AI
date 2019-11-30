@@ -1,5 +1,5 @@
-from django.urls import path
-from machine import views
+from django.urls import path, re_path
+from machine import views, wsgi_view
 
 urlpatterns = [
     # Machine
@@ -14,8 +14,12 @@ urlpatterns = [
     path( 'Machine/<int:Machine_ID>/NN/Main', views.MachineNNMain ),
     path( 'Machine/<int:Machine_ID>/NN/Parameters', views.MachineNNParameters ),
     path( 'Machine/<int:Machine_ID>/NN/Shape', views.MachineNNShape ),
+
+    # NN TensorBoard
     path( 'Machine/<int:Machine_ID>/NN/Tensorboard', views.MachineNNTensorboard ),
     path( 'Machine/<int:Machine_ID>/NN/Tensorboard-engine', views.MachineNNTensorboardEngine ),
+    path( 'Machine/<int:Machine_ID>/NN/tf-interactive-inference-dashboard/<path:ResourceFile>', views.MachineNNTensorboardEngineStatic ),
+    path( "Machine/<int:Machine_ID>/NN/data/<path:Resource>", wsgi_view.WsgiView.as_view( application=wsgi_view.tb_wsgi_app ) ),
 
     # Graph
     path( 'Machine/<int:Machine_ID>/InputGraph', views.MachineInputGraph ),

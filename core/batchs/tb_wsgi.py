@@ -1,4 +1,4 @@
-def tb_wsgi_app(environ, start_response, batch_id):
+def tb_wsgi_app(environ, start_response, Machine_ID):
     from tensorboard import default
     from tensorboard import program
     from tensorboard.backend import application
@@ -20,8 +20,8 @@ def tb_wsgi_app(environ, start_response, batch_id):
 
 
     argv = [__file__,
-        '--logdir={}/tf-logs/{}'.format(conf.settings.BASE_DIR, batch_id),
-        '--path_prefix=/view/{}'.format(batch_id)
+        '--logdir={}/tf-logs/{}'.format( conf.settings.BASE_DIR, Machine_ID ),
+        '--path_prefix=/view/{}'.format( Machine_ID )
     ]
     tensorboard.configure(argv=argv)
 

@@ -41,9 +41,13 @@ from rest_framework import mixins
 ##############################################################################3
 # Tools
 ##############################################################################3
-def serve_file(filename):
+def serve_html(filename):
     image_data = open(filename, "rb").read()
     return HttpResponse(image_data, content_type="text/html")
+
+def serve_image(filename):
+    image_data = open(filename, "rb").read()
+    return HttpResponse(image_data, content_type="image/png")
 
 
 ##############################################################################3
@@ -251,7 +255,11 @@ def MachineNNTensorboard( request, Machine_ID ):
 
 @login_required
 def MachineNNTensorboardEngine( request, Machine_ID ):
-    return serve_file(settings.BASE_DIR + '/static/tensorboard/engine.html')
+    return serve_html(settings.BASE_DIR + '/static/tensorboard/index.html')
+
+@login_required
+def MachineNNTensorboardEngineStatic( request, Machine_ID, ResourceFile ):
+    return serve_image( settings.BASE_DIR + '/static/tensorboard/tf-interactive-inference-dashboard/' + ResourceFile )
 
 
 
