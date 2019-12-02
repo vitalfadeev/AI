@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script runned on server
+# it will be:
+# - fetch website sources
+# - reload Apache
+
 _message() {
     MESSAGE=$*
     echo -e "\e[32m${MESSAGE}\e[0m"
