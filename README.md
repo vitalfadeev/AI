@@ -15,6 +15,13 @@ Script:
 
     
 ## Deploy
+
+For deploy without password, need add SSH RSA public key to dev-server.
+See [Acess-to-server-by-SSH-Key](docs/Acess-to-server-by-SSH-Key.md)
+
+
+Then can to run ./deploy.sh  
+
     ./deploy.sh
 
 
