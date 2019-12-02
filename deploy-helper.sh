@@ -56,6 +56,7 @@ systemctl reload apache2
 
 # All done!
 _message "All done!"
+_message "http://ai.ixioo.com"
 
 
 # it runned like a: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy-helper.sh
