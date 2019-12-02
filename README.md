@@ -11,13 +11,13 @@ Script:
 - [Django workflow](docs/django-workflow.png)
 - [Showing Tensorboard](docs/TensorBoard.png)
 - [Creating machine (REST API)](docs/AI-creating-machine.png)  
-- [Acess-to-server-by-SSH-Key](docs/Acess-to-server-by-SSH-Key.md)
+- [Access-to-server-by-SSH-Key](docs/Access-to-server-by-SSH-Key.md)
 
     
 ## Deploy
 
 For deploy without password, need add SSH RSA public key to dev-server.
-See [Acess-to-server-by-SSH-Key](docs/Acess-to-server-by-SSH-Key.md)
+See [Access-to-server-by-SSH-Key](docs/Access-to-server-by-SSH-Key.md)
 
 
 Then can to run ./deploy.sh  
