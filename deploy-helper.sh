@@ -24,9 +24,9 @@ systemctl reload apache2
 _message "All done!"
 
 
-# it runned like a: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy.sh
+# it runned like a: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy-helper.sh
 #
 # or
 # Login via ssh
 # ssh root@94.23.192.197
-# /home/www/htdocs/AI/deploy.sh
+# /home/www/htdocs/AI/deploy-helper.sh
