@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # This script runned on server
+# via ssh root@94.23.192.197 /home/www/htdocs/AI/deploy-helper.sh
+# (see: deploy.sh)
+#
 # it will be:
 # - fetch website sources
 # - reload Apache
