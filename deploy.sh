@@ -20,6 +20,10 @@ _message "Reloading Apache"
 systemctl reload apache2
 
 
+# All done!
+_message "All done!"
+
+
 # it runned like a: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy.sh
 #
 # or
