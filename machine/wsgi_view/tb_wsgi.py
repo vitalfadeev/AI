@@ -1,6 +1,10 @@
 import os
 from shutil import copyfile
 
+from django.shortcuts import get_object_or_404
+
+from machine.models import Machine
+
 
 def tb_wsgi_app(environ, start_response, Machine_ID, Resource):
     from tensorboard import default
@@ -10,7 +14,10 @@ def tb_wsgi_app(environ, start_response, Machine_ID, Resource):
 
     BASE_DIR = settings.BASE_DIR
 
+    # Getting Machine
+    machine = get_object_or_404( Machine, pk=Machine_ID )
 
+    # Init TB
     plugins = default.get_plugins()
     assets_zip_provider = None
 
@@ -22,7 +29,11 @@ def tb_wsgi_app(environ, start_response, Machine_ID, Resource):
     os.makedirs( log_dir, exist_ok=True )
 
     # Copy log
-    copyfile( f"{BASE_DIR}/tf-logs/6/events.out.tfevents.1565787567.DESKTOP-8045KQ7", f"{log_dir}/events.out.tfevents.1565787567.DESKTOP-8045KQ7" )
+    timestamp = "1565787567"
+    station = "DESKTOP-8045KQ7"
+
+    with open( f"{log_dir}/events.{timestamp}.{station}", 'wb' ) as f:
+        f.write( machine.Training_FileTensorBoardLog )
 
     # Prepare TB args
     argv = [__file__,
