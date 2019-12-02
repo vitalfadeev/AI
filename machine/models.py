@@ -280,6 +280,7 @@ class Machine(models.Model, MachineMixin):
     Training_TrainingCellDelaySec              =  models.IntegerField(null=True)
     Training_DateTimeMachineModel              =  models.DateTimeField(null=True)
     Training_PathLogTensorBoard                =  models.CharField(max_length=400, null=True)
+    Training_FileTensorBoardLog                =  models.BinaryField(null=True)
     Training_TrainingEpochCount                =  models.IntegerField(null=True)
     Training_TrainingBatchSize                 =  models.IntegerField(null=True)
     Training_TotalTrainingLineCount            =  models.IntegerField(null=True)
