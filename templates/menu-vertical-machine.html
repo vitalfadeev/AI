@@ -56,7 +56,7 @@
         </li>
 
         <li class="bold waves-effect">
-          <a class="collapsible-header">Exportation<i class="material-icons">filter_drama</i></a>
+          <a href="/Machine/{{Machine_ID}}/Exportation/ToFile" class="collapsible-header">Exportation<i class="material-icons">filter_drama</i></a>
           <div class="collapsible-body">
                 <ul>
                     <li><a href="/Machine/{{Machine_ID}}/Exportation/ToFile" source="Machines - View-Edit.View-6">To File</a></li>
@@ -100,7 +100,7 @@
         for (var i = 0, l = links.length; i < l; i++) {
             var link = links[i];
 
-            if (link.href == location) {
+            if (link.href == location && !link.className) {
                 return link;
             }
 
