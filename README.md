@@ -11,8 +11,7 @@ Script:
 - [Django workflow](docs/django-workflow.png)
 - [Showing Tensorboard](docs/TensorBoard.png)
 - [Creating machine (REST API)](docs/AI-creating-machine.png)  
-
-
+- [Acess-to-server-by-SSH-Key](docs/Acess-to-server-by-SSH-Key.md)
 
     
 ## Deploy
