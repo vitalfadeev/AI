@@ -12,6 +12,10 @@
 SITE=/home/www/htdocs/AI
 
 
+# Stop on eny error
+set -e
+
+
 _message() {
     MESSAGE=$*
     echo -e "\e[32m${MESSAGE}\e[0m"
