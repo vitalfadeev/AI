@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Login via ssh
-ssh root@94.23.192.197
-
 # cd site
 cd /home/www/htdocs/AI/
 
@@ -13,4 +10,9 @@ git pull
 systemctl reload apache2
 
 
-# in future just run: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy.sh
+# it runned like a: ssh root@94.23.192.197 /home/www/htdocs/AI/deploy.sh
+#
+# or
+# Login via ssh
+# ssh root@94.23.192.197
+# /home/www/htdocs/AI/deploy.sh
