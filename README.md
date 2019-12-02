@@ -1,5 +1,5 @@
 ## Installation 
-See descriptin in [INSTALL.md](INSTALL.md)
+Full description in [INSTALL.md](INSTALL.md)
 
 Script:
 
