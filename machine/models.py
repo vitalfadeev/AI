@@ -126,25 +126,33 @@ def MachineDataInputLinesModelFactory( machine_id, columns: list, types: dict, a
     fields = _get_fields( columns, types )
     fields.update( additional_columns )
 
-    return DynamicModel( (models.Model, DymoMixin),
+    cls = DynamicModel( (models.Model, DymoMixin),
                          f"Machine_{machine_id}_DataInputLines",
                          table=f"Machine_{machine_id}_DataInputLines",
                          fields=fields,
                          app_label="machine",
                          module_name="",
-                         primary_key_column="id",
+                         primary_key_column="LineInput_ID",
                          db_scheme="MachineData")
+
+    cls._meta.Machine_ID = machine_id
+
+    return cls
 
 
 def MachineDataOutputLinesModelFactory( machine_id, columns: list, types: dict, additional_columns: dict ):
-    return DynamicModel( (models.Model, DymoMixin),
+    cls = DynamicModel( (models.Model, DymoMixin),
                          f"Machine_{machine_id}_DataOutputLines",
                          table=f"Machine_{machine_id}_DataOutputLines",
                          fields=[],
                          app_label="machine",
                          module_name="",
-                         primary_key_column="id",
+                         primary_key_column="LineInput_ID",
                          db_scheme="MachineData" )
+
+    cls._meta.Machine_ID = machine_id
+
+    return cls
 
 
 def get_upload_path( instance, filename ):

@@ -1,41 +1,23 @@
-import json
+import os
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
-from django.urls import resolve
 from django.utils.decorators import method_decorator
-from django.views.generic import FormView
-from rest_framework.parsers import FileUploadParser
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from django.conf import settings
 
-from core import settings
 from graph import graphs
 from graph.models import Graph
 from machine.datainput import datatable
-from machine.loader.create import create_model_table
 from machine.models import Machine
-from team.models import Team
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
     MachineNNShapeForm, MachineInputGraphForm
-from machine.decorators import user_can_view_machine, user_can_edit_machine
-
-from machine.analysis.DataPreAnalyser import analyse_source_data_find_input_output
-
-# from machine.analysis.DataLinesInputStore import DataLinesInputStore
-from rest_framework import viewsets, parsers
 from machine.serializers import MachineSerializer
-
-from machine.models import MachineMessage
-
-from django.db import connection
 
 from rest_framework import generics, viewsets
 from rest_framework import mixins
+from rest_framework.permissions import IsAuthenticated
 
 
 ##############################################################################3
@@ -51,7 +33,7 @@ def serve_image(filename):
 
 
 ##############################################################################3
-# Machine
+# Machines
 ##############################################################################3
 @login_required
 def MachineAdd( request ):
@@ -71,63 +53,6 @@ def MachineAdd( request ):
         form = MachineAddForm()
         context.update(locals())
         return render(request, 'machine/MachineAdd.html', context)
-
-
-@login_required
-def MachineDescribe( request, Machine_ID ):
-    context = {}
-    machine = get_object_or_404( Machine, pk=Machine_ID )
-    columns = machine.AnalysisSource_ColumnType.keys()
-
-    if request.POST:
-        form = MachineDescribeForm( request.POST, instance=machine )
-        if form.is_valid():
-            entry = form.save(commit=False)
-            entry.save()
-            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Parameters")
-        else:
-            context.update( locals() )
-            return render(request, 'machine/MachineDescribe.html', context)
-    else:
-        form = MachineDescribeForm( instance=machine )
-        context.update(locals())
-        return render(request, 'machine/MachineDescribe.html', context)
-
-
-@login_required
-def MachineMain( request, Machine_ID ):
-    context = {}
-    machine = get_object_or_404( Machine, pk=Machine_ID )
-
-    if request.POST:
-        form = MachineMainForm( request.POST, instance=machine )
-
-        if form.is_valid():
-            entry = form.save(commit=False)
-            entry.save()
-            return HttpResponseRedirect(f"/Machines")
-        else:
-            context.update( locals() )
-            return render(request, 'machine/MachineMain.html', context)
-    else:
-        form = MachineMainForm( instance=machine )
-        context.update( locals() )
-        return render(request, 'machine/MachineMain.html', context)
-
-
-@method_decorator(login_required, name='dispatch')
-class MachineDatatableAjax(datatable.DTView):
-    """ Return Input data. Using with jquery.datatables """
-    def get(self, request, Machine_ID):
-        # Query from table BATCH_INPUT_NNN
-        # without pk 'index'
-        # return JSON
-        machine = get_object_or_404( Machine, pk=Machine_ID )
-
-        self.model = machine.get_machine_data_input_lines_model()
-        self.columns = list( machine.AnalysisSource_ColumnType.keys() )
-        self.order_columns = self.columns
-        return super().get(request)
 
 
 def Machines(request):
@@ -175,6 +100,243 @@ class MachinesDatatableAjax(datatable.DTView):
         qs = qs.order_by('-DateTimeCreation')
 
         return qs
+
+
+##############################################################################3
+# Input
+##############################################################################3
+@login_required
+def MachineMain( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    if request.POST:
+        form = MachineMainForm( request.POST, instance=machine )
+
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machines")
+        else:
+            context.update( locals() )
+            return render(request, 'machine/MachineMain.html', context)
+    else:
+        form = MachineMainForm( instance=machine )
+        context.update( locals() )
+        return render(request, 'machine/MachineMain.html', context)
+
+
+@login_required
+def MachineDescribe( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+    columns = machine.AnalysisSource_ColumnType.keys()
+
+    if request.POST:
+        form = MachineDescribeForm( request.POST, instance=machine )
+        if form.is_valid():
+            entry = form.save(commit=False)
+            entry.save()
+            return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Parameters")
+        else:
+            context.update( locals() )
+            return render(request, 'machine/MachineDescribe.html', context)
+    else:
+        form = MachineDescribeForm( instance=machine )
+        context.update(locals())
+        return render(request, 'machine/MachineDescribe.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class MachineDatatableAjax(datatable.DTView):
+    """ Return Input data. Using with jquery.datatables """
+    def get(self, request, Machine_ID):
+        # Query from table BATCH_INPUT_NNN
+        # without pk 'index'
+        # return JSON
+        machine = get_object_or_404( Machine, pk=Machine_ID )
+
+        self.model = machine.get_machine_data_input_lines_model()
+        self.columns = list( machine.AnalysisSource_ColumnType.keys() )
+        self.order_columns = self.columns
+        return super().get(request)
+
+
+@login_required
+def MachineInputCorrelation( request, Machine_ID ):
+    import plotly.graph_objects as go
+    import plotly.offline as opy
+
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    # Data
+    model = machine.get_machine_data_input_lines_model()
+    inout_cols = machine.AnalysisSource_ColumnsNameInput + machine.AnalysisSource_ColumnsNameOutput
+    df = model.as_pandas_dataframe( inout_cols )
+
+    import pandas as pd
+    for c, t in machine.AnalysisSource_ColumnType.items():
+        if c in inout_cols:
+            if t == "FLOAT" or t == "NUMERIC":
+                df[ c ] = pd.to_numeric( df[ c ], errors='coerce' )
+
+    # Corr
+    correlation_matrix = df.corr() # .values.tolist()
+
+    # Render
+    fig = go.Figure( data=go.Heatmap( x=correlation_matrix.columns, y=correlation_matrix.columns, z=correlation_matrix ) )
+
+    div = opy.plot(fig, auto_open=False, output_type='div')
+
+    context.update( locals() )
+    return render(request, 'machine/MachineInputCorrelation.html', context)
+
+
+# # import matplotlib.pyplot as plt
+# # import numpy as np
+# # from matplotlib.backends.backend_agg import FigureCanvasAgg
+# # from django.http import HttpResponse
+#
+# # def MachineInputCorrelation1(request, Machine_ID):
+# #     # Data for plotting
+# #     t = np.arange(0.0, 2.0, 0.01)
+# #     s = 1 + np.sin(2 * np.pi * t)
+# #
+# #     fig, ax = plt.subplots()
+# #     ax.plot(t, s)
+# #
+# #     ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+# #            title='About as simple as it gets, folks')
+# #     ax.grid()
+# #
+# #     response = HttpResponse(content_type = 'image/png')
+# #     canvas = FigureCanvasAgg(fig)
+# #     canvas.print_png(response)
+# #     return response
+# #
+# #
+# @login_required
+# def MachineInputCorrelation( request, Machine_ID ):
+#     import random
+#     import django
+#     import datetime
+#     import plotly
+#
+#     from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+#     from matplotlib.figure import Figure
+#     from matplotlib.dates import DateFormatter
+#     # import seaborn as sns
+#
+#     fig=Figure()
+#     ax=fig.add_subplot(111)
+#     x=[]
+#     y=[]
+#     now=datetime.datetime.now()
+#     delta=datetime.timedelta(days=1)
+#     for i in range(10):
+#         x.append(now)
+#         now+=delta
+#         y.append(random.randint(0, 1000))
+#     ax.plot_date(x, y, '-')
+#     ax.xaxis.set_major_formatter(DateFormatter('%Y-%m-%d'))
+#     fig.autofmt_xdate()
+#
+#     canvas=FigureCanvas(fig)
+#
+#     figure_dir = f"/media/machine/{Machine_ID}"
+#     os.makedirs( f"{settings.BASE_DIR}/{figure_dir}", exist_ok=True )
+#
+#     cfile = f"{settings.BASE_DIR}/{figure_dir}/InputCorrelations.png"
+#     figure_url = f"{figure_dir}/InputCorrelations.png"
+#
+#     with open( cfile, 'wb' ) as f:
+#         canvas.print_png(f)
+#
+#     context = {}
+#     context.update( locals() )
+#     return render(request, 'machine/MachineInputCorrelation.html', context)
+#
+#
+#
+# def MachineInputCorrelation0( request, Machine_ID ):
+#     context = {}
+#     machine = get_object_or_404( Machine, pk=Machine_ID )
+#
+#     import seaborn as sns
+#     import matplotlib.pyplot as plt
+#     from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+#     # import mpld3
+#
+#     # Data
+#     # model = machine.get_machine_data_input_lines_model()
+#     # df = model.as_pandas_dataframe()
+#
+#     # Figure
+#     # sns.set(context='talk', style='white')
+#     # fig = Figure()
+#     # fig, ax = plt.subplots()
+#     #
+#     # def create_figure():
+#     #     from matplotlib.figure import Figure
+#     #     import random
+#     #
+#     #     fig = Figure()
+#     #     axis = fig.add_subplot( 1, 1, 1 )
+#     #     xs = range( 100 )
+#     #     ys = [ random.randint( 1, 50 ) for x in xs ]
+#     #     axis.plot( xs, ys )
+#     #     return fig
+#
+#
+#     # sns.set(context='talk', style='white')
+#     # fig = create_figure()
+#     # correlation_matrix = df.corr()
+#     # heat_map = sns.heatmap( correlation_matrix, annot=True )
+#     # output = io.BytesIO()
+#     # FigureCanvas(fig).print_png(output)
+#     # return HttpResponse(output.getvalue(), content_type="image/png")
+#     context.update( locals() )
+#     return render(request, 'machine/MachineInputCorrelation.html', context)
+#
+#     #
+#     # # fig = plt.figure()
+#     # # ax = fig.gca()
+#     # # ax.plot( [ 1, 2, 3, 4 ] )
+#     # plt.plot( [ 0, 1, 2, 3, 4 ], [ 0, 3, 5, 9, 11 ] )
+#     #
+#     # # mpld3.show( fig )
+#     #
+#     # # Correlation
+#     # # correlation_matrix = df.corr()
+#     # heat_map = sns.heatmap( correlation_matrix, annot=True )
+#     # # heat_map = sns.heatmap( correlation_matrix, ax=ax, annot=True )
+#     #
+#     # # Render
+#     # # html = mpld3.fig_to_html( fig )
+#     #
+#     # #plt.tight_layout()
+#     # # figure_dir = f"/media/machine/{Machine_ID}"
+#     # # os.makedirs( figure_dir, exist_ok=True )
+#     # #
+#     # # cfile = f"{settings.BASE_DIR}/{figure_dir}/InputCorrelations.png"
+#     # # figure_url = f"{settings.BASE_DIR}/InputCorrelations.png"
+#     # #
+#     # # output = io.BytesIO()
+#     # # FigureCanvas(fig).print_png(output)
+#     # #
+#     # # with open( cfile, 'wb' ) as f:
+#     #     # FigureCanvas( fig ).print_png( f )
+#     #
+#     # cfile = "/tmp/books_read2.png"
+#     # plt.savefig( cfile )
+#     #
+#     # #
+#     # context.update( locals() )
+#     #
+#     # return render(request, 'machine/MachineInputCorrelation.html', context)
+#     # # return HttpResponse(output.getvalue(), content_type="image/png")
+
 
 
 ##############################################################################3
@@ -329,6 +491,26 @@ def MachineInputGraph( request, Machine_ID ):
     context.update( locals() )
     return render(request, 'machine/MachineInputGraph.html', context)
 
+
+##############################################################################3
+# Export
+##############################################################################3
+@login_required
+def MachineExportationToFile( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    context.update( locals() )
+    return render(request, 'machine/MachineExportationToFile.html', context)
+
+
+@login_required
+def MachineExportationWithAPI( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    context.update( locals() )
+    return render(request, 'machine/MachineExportationWithAPI.html', context)
 
 
 

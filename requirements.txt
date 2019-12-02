@@ -60,3 +60,9 @@ django-pandas
 #
 pytest
 
+# For correlation heat-map
+seaborn
+matplotlib
+#mpld3
+jinja2
+

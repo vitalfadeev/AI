@@ -80,14 +80,17 @@ class DymoMixin:
 
 
     @classmethod
-    def as_pandas_dataframe(cls):
+    def as_pandas_dataframe( cls, fields="*" ):
         import pandas
         from django.db import connections
+
+        if isinstance( fields, list ):
+            fields = ", ".join( fields )
 
         connection = connections['MachineData']
 
         with connections['MachineData'].cursor() as cursor:
-            sql = 'SELECT * FROM `{}`'.format(cls._meta.db_table)
+            sql = 'SELECT {} FROM `{}`'.format( fields, cls._meta.db_table )
             df = pandas.read_sql_query( sql, connection )
             return df
 

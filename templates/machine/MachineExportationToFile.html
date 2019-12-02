@@ -1,7 +1,7 @@
 {% extends 'machine/MachineLayout.html' %}
 {% load static %}
 {% load staticfiles %}
-{% block title %} NN {% endblock %}
+{% block title %} Exportation To File {% endblock %}
 
 {% block main %}
 
@@ -11,7 +11,7 @@
             <div class="section">
 
                 <!-- Here -->
-                Main
+               <a href="/media/{{machine.input_file}}">Download</a>
 
             </div>
         </div>

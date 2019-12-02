@@ -2,13 +2,19 @@ from django.urls import path, re_path
 from machine import views, wsgi_view
 
 urlpatterns = [
-    # Machine
-    path('Machine/Add', views.MachineAdd),
+    # Machines
+    path('Machines', views.Machines ),
+    path('Machines/datatable-ajax', views.MachinesDatatableAjax.as_view() ),
+    path( 'Machine/Add', views.MachineAdd ),
+
+    # Input
     path('Machine/<int:Machine_ID>/Main', views.MachineMain ),
     path('Machine/<int:Machine_ID>/Describe', views.MachineDescribe ),
     path('Machine/<int:Machine_ID>/datatable-ajax', views.MachineDatatableAjax.as_view() ),
-    path('Machines', views.Machines ),
-    path('Machines/datatable-ajax', views.MachinesDatatableAjax.as_view() ),
+    path('Machine/<int:Machine_ID>/InputCorrelation', views.MachineInputCorrelation ),
+
+    # Graph
+    path( 'Machine/<int:Machine_ID>/InputGraph', views.MachineInputGraph ),
 
     # NN
     path( 'Machine/<int:Machine_ID>/NN/Main', views.MachineNNMain ),
@@ -21,6 +27,7 @@ urlpatterns = [
     path( 'Machine/<int:Machine_ID>/NN/tf-interactive-inference-dashboard/<path:ResourceFile>', views.MachineNNTensorboardEngineStatic ),
     path( "Machine/<int:Machine_ID>/NN/data/<path:Resource>", wsgi_view.WsgiView.as_view( application=wsgi_view.tb_wsgi_app ) ),
 
-    # Graph
-    path( 'Machine/<int:Machine_ID>/InputGraph', views.MachineInputGraph ),
+    # Export
+    path( 'Machine/<int:Machine_ID>/Exportation/ToFile', views.MachineExportationToFile ),
+    path( 'Machine/<int:Machine_ID>/Exportation/WithAPI', views.MachineExportationWithAPI ),
 ]

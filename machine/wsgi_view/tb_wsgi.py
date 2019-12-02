@@ -36,6 +36,7 @@ def tb_wsgi_app(environ, start_response, Machine_ID, Resource):
         f.write( machine.Training_FileTensorBoardLog )
 
     # Prepare TB args
+
     argv = [__file__,
         f'--logdir={log_dir}',
         f'--path_prefix=/Machine/{Machine_ID}/NN/'
