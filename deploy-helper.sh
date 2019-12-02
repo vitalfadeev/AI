@@ -8,13 +8,18 @@
 # - fetch website sources
 # - reload Apache
 
+
+SITE=/home/www/htdocs/AI
+
+
 _message() {
     MESSAGE=$*
     echo -e "\e[32m${MESSAGE}\e[0m"
 }
 
 # cd site
-cd /home/www/htdocs/AI/
+_message "cd ${SITE}"
+cd ${SITE}
 
 
 # Getting fresh sources
