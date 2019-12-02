@@ -23,6 +23,23 @@ _message "Getting fresh sources"
 git pull deploy master
 
 
+# Activating Virtual environment
+_message "Activating Virtual environment"
+source ~/src/AI/venv//bin/activate
+
+
+# Installing requirements
+_message "Installing requirements"
+pip install pip --upgrade
+pip install -r requirements.txt
+
+
+# Updating DB structure
+_message "Updating DB structure"
+python ./manage.py makemigrations
+python ./manage.py migrate
+
+
 # Reloading Apache
 _message "Reloading Apache"
 systemctl reload apache2
