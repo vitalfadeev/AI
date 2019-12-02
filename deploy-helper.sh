@@ -25,7 +25,7 @@ git pull deploy master
 
 # Activating Virtual environment
 _message "Activating Virtual environment"
-source ~/src/AI/venv//bin/activate
+source venv/bin/activate
 
 
 # Installing requirements
