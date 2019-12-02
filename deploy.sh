@@ -3,10 +3,11 @@
 # cd site
 cd /home/www/htdocs/AI/
 
-# get fresh sources
-git pull
+# Getting fresh sources
+# Note: deploy was created by command: git remote add deploy ssh://git@github.com/vitalfadeev/AI.git
+git pull deploy
 
-# reload Apache
+# Reloading Apache
 systemctl reload apache2
 
 
