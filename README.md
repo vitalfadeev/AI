@@ -1,9 +1,19 @@
-## install 
+## Installation 
 See descriptin in [INSTALL.md](INSTALL.md)
 
 Script:
 
     ./1-install-<platform>.sh
+
+
+## Docs:
+
+- [Django workflow](docs/django-workflow.png)
+- [Showing Tensorboard](docs/TensorBoard.png)
+- [Creating machine (REST API)](docs/AI-creating-machine.png)  
+
+
+
     
 ## Deploy
     ./deploy.sh
