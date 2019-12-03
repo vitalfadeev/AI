@@ -378,7 +378,7 @@ def ImportationFromFile( request, Machine_ID ):
     machine = get_object_or_404( Machine, pk=Machine_ID )
 
     if request.POST:
-        form = MachineImportationFromFileForm( request.POST, request.FILES, instance=machine )
+        form = MachineImportationFromFileForm( request.POST, request.FILES )
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
@@ -387,7 +387,7 @@ def ImportationFromFile( request, Machine_ID ):
             context.update( locals() )
             return render(request, 'machine/MachineImportationFromFile.html', context)
     else:
-        form = MachineImportationFromFileForm( instance=machine )
+        form = MachineImportationFromFileForm()
         context.update(locals())
         return render(request, 'machine/MachineImportationFromFile.html', context)
 

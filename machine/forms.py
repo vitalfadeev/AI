@@ -82,11 +82,7 @@ class MachineInputGraphForm( ModelForm ):
         ]
 
 
-class MachineImportationFromFileForm( ModelForm ):
-    class Meta:
-        model = Machine
-        fields = [
-            'input_file',
-        ]
+class MachineImportationFromFileForm( forms.Form ):
+    from_file = forms.FileField()
 
 
