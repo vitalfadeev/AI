@@ -385,11 +385,11 @@ def ImportationFromFile( request, Machine_ID ):
             return HttpResponseRedirect(f"/Machine/{entry.pk}/Describe")
         else:
             context.update( locals() )
-            return render(request, 'machine/ImportationFromFile.html', context)
+            return render(request, 'machine/MachineImportationFromFile.html', context)
     else:
         form = MachineImportationFromFileForm( instance=machine )
         context.update(locals())
-        return render(request, 'machine/ImportationFromFile.html', context)
+        return render(request, 'machine/MachineImportationFromFile.html', context)
 
 
 @login_required
@@ -398,7 +398,7 @@ def ImportationWithAPI( request, Machine_ID ):
     machine = get_object_or_404( Machine, pk=Machine_ID )
 
     context.update( locals() )
-    return render(request, 'machine/ImportationWithAPI.html', context)
+    return render(request, 'machine/MachineImportationWithAPI.html', context)
 
 
 ###############################################################################################
