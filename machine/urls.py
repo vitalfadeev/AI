@@ -28,6 +28,10 @@ urlpatterns = [
     path( "Machine/<int:Machine_ID>/NN/data/<path:Resource>", wsgi_view.WsgiView.as_view( application=wsgi_view.tb_wsgi_app ) ),
 
     # Export
-    path( 'Machine/<int:Machine_ID>/Exportation/ToFile', views.MachineExportationToFile ),
-    path( 'Machine/<int:Machine_ID>/Exportation/WithAPI', views.MachineExportationWithAPI ),
+    path( 'Machine/<int:Machine_ID>/ExportationToFile', views.MachineExportationToFile ),
+    path( 'Machine/<int:Machine_ID>/ExportationWithAPI', views.MachineExportationWithAPI ),
+
+    # Omport
+    path( 'Machine/<int:Machine_ID>/ImportationFromFile', views.ImportationFromFile ),
+    path( 'Machine/<int:Machine_ID>/ImportationWithAPI', views.ImportationWithAPI ),
 ]

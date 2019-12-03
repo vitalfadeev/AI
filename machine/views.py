@@ -12,7 +12,7 @@ from graph.models import Graph
 from machine.datainput import datatable
 from machine.models import Machine
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
-    MachineNNShapeForm, MachineInputGraphForm
+    MachineNNShapeForm, MachineInputGraphForm, MachineImportationFromFileForm
 from machine.serializers import MachineSerializer
 
 from rest_framework import generics, viewsets
@@ -381,7 +381,6 @@ def ImportationFromFile( request, Machine_ID ):
         form = MachineImportationFromFileForm( request.POST, request.FILES, instance=machine )
         if form.is_valid():
             entry = form.save(commit=False)
-            entry.Owner_User_ID = request.user
             entry.save()
             return HttpResponseRedirect(f"/Machine/{entry.pk}/Describe")
         else:
