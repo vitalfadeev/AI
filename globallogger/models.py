@@ -1,22 +1,19 @@
 from django.db import models
 
-# Create your models here.
-from django_mysql.models import JSONField
-
 
 class GlobalLogger(models.Model):
-    class Meta:
-        db_name = "GlobalLogger"
+	class Meta:
+		app_label = 'globallogger'
+		db_table = 'GlobalLogger'
 
-    Log_ID = models.AutoField(primary_key=True)
 
-    DateTimeCreation = models.DateTimeField(auto_now=True)
+	Log_ID = models.AutoField(primary_key=True)
 
-    TraceBack = JSONField(null=True, default=list)
-    MainModule = models.CharField(max_length=255, null=True)
-    MainFunction = models.CharField(max_length=255, null=True)
-
-    Message = models.TextField(null=True)
-
-    HostName = models.CharField(max_length=255, null=True)
-    IP = models.IPAddressField(null=True)
+	Level            = models.CharField(max_length=10)
+	DateTimeCreation = models.DateTimeField(auto_now=True)
+	TraceBack        = models.TextField(blank=True)
+	MainModule       = models.CharField(max_length=100)
+	MainFunction     = models.CharField(max_length=100)
+	Message          = models.TextField(blank=True)
+	HostName         = models.CharField(max_length=45)
+	IP               = models.CharField(max_length=100)

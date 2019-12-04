@@ -55,6 +55,7 @@ def MachineAdd( request ):
         return render(request, 'machine/MachineAdd.html', context)
 
 
+@login_required
 def Machines(request):
     machines = Machine.objects.filter(Owner_User_ID=request.user).order_by('-DateTimeCreation')
     context = {}
@@ -380,9 +381,7 @@ def ImportationFromFile( request, Machine_ID ):
     if request.POST:
         form = MachineImportationFromFileForm( request.POST, request.FILES )
         if form.is_valid():
-            entry = form.save(commit=False)
-            entry.save()
-            return HttpResponseRedirect(f"/Machine/{entry.pk}/Describe")
+            return HttpResponseRedirect(f"/Machine/{Machine_ID}/Describe")
         else:
             context.update( locals() )
             return render(request, 'machine/MachineImportationFromFile.html', context)

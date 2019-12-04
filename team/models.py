@@ -17,24 +17,3 @@ class Team(models.Model):
         db_table = 'Team'
         verbose_name = _('Team')
         verbose_name_plural = _('Teams')
-
-
-# class InviteMember(models.Model):
-#     team = models.ForeignKey(Team, on_delete=models.CASCADE,
-#                             null=True, blank=True)
-#     email = models.EmailField()
-#
-#     modified_date = models.DateTimeField(auto_now=True)
-#     created_date = models.DateTimeField(_('Received DateTime'),
-#                                         auto_now_add=True)
-#
-#     def __str__(self):
-#         return self.email
-#
-#     def save(self, *args, **kwargs):
-#         super().save(*args, **kwargs)
-#
-#
-#     class Meta:
-#         verbose_name = _('Invite Member')
-#         verbose_name_plural = _('Invite Members')

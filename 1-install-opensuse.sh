@@ -225,8 +225,6 @@ _django_tables() {
     ./manage.py migrate
     ./manage.py makemigrations graph
     ./manage.py migrate
-    ./manage.py makemigrations communication
-    ./manage.py migrate
     ./manage.py makemigrations consulting
     ./manage.py migrate
 }

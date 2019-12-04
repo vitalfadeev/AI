@@ -2,7 +2,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from user.forms import EditProfileForm
 from team.models import Team
-from communication.models import Message
 
 from user.serializers import UserSerializer
 from django.contrib.auth.models import User

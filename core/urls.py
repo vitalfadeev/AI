@@ -21,6 +21,7 @@ from core import views
 from rest_framework import routers, serializers, viewsets
 
 from graph.views import GraphViewSet
+from machine.admin import AdminDataInputLines, MachineDatatableAjax
 from machine.views import MachineViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -32,6 +33,9 @@ router.register(r'machine', MachineViewSet)
 router.register(r'graph', GraphViewSet)
 
 urlpatterns = [
+    # Admin
+    path('admin/Machine/<int:Machine_ID>/DataInputLines', AdminDataInputLines ),
+    path('admin/Machine/<int:Machine_ID>/datatable-ajax', MachineDatatableAjax.as_view() ),
     path('admin/', admin.site.urls),
 
     # google, facebook auth

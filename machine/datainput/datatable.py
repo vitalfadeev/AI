@@ -15,8 +15,7 @@ class DTView(BaseDatatableView):
     def initialize(self, *args, **kwargs):
         super(DTView, self).initialize(*args, **kwargs)
         # fix jQuery.DataTable parameters class detection
-        if 'iSortingCols' in self._querydict or 'iDisplayLength' in self._querydict:
-            self.pre_camel_case_notation = True
+        self.pre_camel_case_notation = False
 
 
     def render_column(self, row, column, *args, **kwargs):

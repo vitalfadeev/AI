@@ -51,14 +51,15 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'team',
     'user',
+    'team',
     'machine',
     'work',
     'consulting',
-    'communication',
     'graph',
     'dashboard',
+    'server',
+    'globallogger',
 ]
 
 MIDDLEWARE = [

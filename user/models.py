@@ -4,6 +4,9 @@ from django.db import models
 # Create your models here.
 
 class User(models.Model):
+    class Meta:
+        db_table = 'User'
+
     User_ID = models.OneToOneField(DjangoUser, unique=True, on_delete=models.CASCADE )
 
     Email = models.EmailField(null=True)

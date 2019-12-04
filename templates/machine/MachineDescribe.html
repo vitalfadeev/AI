@@ -23,7 +23,7 @@
                     margin: 0 !important;
                   }
                 </style>
-                <table id="machine-data-input-table" data-ajax_url="/Machine/{{machine.pk}}/datatable-ajax" data-datatables_dom="lfrpti" class="striped">
+                <table id="machine-data-input-table" data-ajax-url="/Machine/{{Machine_ID}}/datatable-ajax" data-dom="rpt" data-page-length="5"  data-scroll-X=true  class="striped">
 
                   <thead>
                     <tr>
@@ -54,7 +54,7 @@
                     {{ form.AnalysisSource_Errors.as_hidden }}
                     {{ form.AnalysisSource_Warnings.as_hidden }}
 
-                    <table id="table-machine-settings">
+                    <table id="table-machine-settings" >
                       <thead>
                         <tr>
                           <th>Column</th>

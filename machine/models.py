@@ -168,7 +168,7 @@ def get_upload_path( instance, filename ):
 
 class Machine(models.Model, MachineMixin):
     Machine_ID                                  =  models.AutoField(primary_key=True)
-    DateTimeCreation                            =  models.DateTimeField(auto_now=True)
+    DateTimeCreation                            =  models.DateTimeField(auto_now_add=True)
     Machine_ID_Original                         =  models.IntegerField(null=True)
 
     Owner_User_ID                               =  models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'))
@@ -197,9 +197,9 @@ class Machine(models.Model, MachineMixin):
 
     Project_ColumnsDescription                  =  JSONField(default=dict, blank=True)
 
-    AnalysisSource_ColumnsNameInput             =  JSONField(default=list, blank=True)
-    AnalysisSource_ColumnsNameOutput            =  JSONField(default=list, blank=True)
-    AnalysisSource_ColumnType                   =  JSONField(default=list)
+    AnalysisSource_ColumnsNameInput             =  JSONField(default=dict, blank=True)
+    AnalysisSource_ColumnsNameOutput            =  JSONField(default=dict, blank=True)
+    AnalysisSource_ColumnType                   =  JSONField(default=dict)
     AnalysisSource_Errors                       =  JSONField(default=dict, blank=True)
     AnalysisSource_Warnings                     =  JSONField(default=dict, blank=True)
     AnalysisSource_ColumnsMissingPercentage     =  JSONField(default=dict)
@@ -306,12 +306,15 @@ class Machine(models.Model, MachineMixin):
 
 
 
-    def get_machine_data_input_lines_model( self ):
-        # return instance of the Machine_<Machine_ID>_DataInputLines
-        # columns = list( self.analysissource_columnnameinput ) + list( self.analysissource_columnnameoutput )
-        types = dict(self.AnalysisSource_ColumnType)
-        columns = list(types.keys())
-        additional_columns = {
+    def get_machine_data_input_lines_columns( self, include_predefined=False ):
+        columns = list( self.AnalysisSource_ColumnType.keys() )
+        if include_predefined:
+            columns.extend( self.get_machine_data_input_lines_predefined_columns() )
+        return columns
+
+
+    def get_machine_data_input_lines_predefined_columns( self ):
+        predefined_columns = {
             "LineInput_ID"        : models.AutoField(primary_key=True),
             "IsForLearning"       : models.BooleanField(default=False),
             "IsForSolving"        : models.BooleanField(default=False),
@@ -320,7 +323,17 @@ class Machine(models.Model, MachineMixin):
             "IsLearned"           : models.BooleanField(default=False),
             "IsSolved"            : models.BooleanField(default=False),
         }
-        return MachineDataInputLinesModelFactory( self.Machine_ID, columns, types, additional_columns )
+        return predefined_columns
+
+
+    def get_machine_data_input_lines_model( self ):
+        # return instance of the Machine_<Machine_ID>_DataInputLines
+        # columns = list( self.analysissource_columnnameinput ) + list( self.analysissource_columnnameoutput )
+        types = dict(self.AnalysisSource_ColumnType)
+        columns = list(types.keys())
+        predefined_columns = self.get_machine_data_input_lines_predefined_columns()
+        return MachineDataInputLinesModelFactory( self.Machine_ID, columns, types, predefined_columns )
+
 
     def get_machine_data_output_lines_model( self ):
         # return instance of the Machine_<Machine_ID>_DataOutputLines
