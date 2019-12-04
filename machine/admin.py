@@ -45,7 +45,6 @@ def AdminDataInputLines( request, Machine_ID ):
     context = { }
     model = machine.get_machine_data_input_lines_model()
     columns = machine.get_machine_data_input_lines_columns( include_predefined=True )
-    title = "Machine Data Input Lines"
     context.update( locals() )
     return render( request, 'admin/AdminDataInputLines.html', context )
 

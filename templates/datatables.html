@@ -2,10 +2,28 @@
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'datatable/datatables.min.css' %}"/>
+<!--
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.1.0/material.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.material.min.css"/>
+-->
+<style>
+  .dataTables_paginate,
+  .dataTables_scroll {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+  }
+  .dataTables_length {
+    text-align: right !important;
+    float: right !important;
+  }
+</style>
 {% endblock css %}
 
 {% block js %}
 <script type="text/javascript" src="{% static 'datatable/datatables.min.js' %}"></script>
+<!--
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.material.min.js"></script>
+-->
 {% endblock js %}
 
 {% csrf_token %}
