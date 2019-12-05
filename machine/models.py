@@ -1,7 +1,7 @@
 import json
 import os
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -107,9 +107,6 @@ type_mapping = {
 #     "EMPTY"                : (models.CharField, {"max_length":400}),
 # }
 
-DEFAULT_MACHINE_ID = 1
-DEFAULT_MACHINE_ORIGINAL_ID = 1
-
 
 def _get_fields( columns, types ):
     fields = {}
@@ -167,23 +164,23 @@ def get_upload_path( instance, filename ):
 
 
 class Machine(models.Model, MachineMixin):
-    Machine_ID                                  =  models.AutoField(primary_key=True)
+    Machine_ID                                  =  models.AutoField(primary_key=True, help_text="Generated auto")
     DateTimeCreation                            =  models.DateTimeField(auto_now_add=True)
-    Machine_ID_Original                         =  models.IntegerField(null=True)
+    Machine_ID_Original                         =  models.IntegerField(null=True, help_text="If this machine is a copy of another machine, then this is the source machine ID")
 
-    Owner_User_ID                               =  models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'))
-    Owner_Team_ID                               =  models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Team'))
+    Owner_User_ID                               =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'), help_text="Owner of this machine")
+    Owner_Team_ID                               =  models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Team'), help_text="Team_ID owner ")
 
-    Project_Name                                =  models.CharField(_('Name'), max_length=200, blank=True)
-    Project_Description                         =  models.TextField(_('Description'), blank=True)
-    Project_DataUsage                           =  models.TextField(_('DataUsage'), null=False, blank=True)
+    Project_Name                                =  models.CharField(_('Name'), max_length=200, blank=True, help_text="One line entered by user owner")
+    Project_Description                         =  models.TextField(_('Description'), blank=True, help_text="Several lines entered by user owner")
+    Project_DataUsage                           =  models.TextField(_('DataUsage'), null=False, blank=True, help_text="Description how to use Machine, data explaination, API usage, etc…")
 
     input_file                                  =  models.FileField(_('file'), upload_to=get_upload_path, null=True )
 
-    Project_DataSourceIsPublic                  =  models.BooleanField(default=False)
-    Project_DataSourceSampleOnlyPublic          =  models.BooleanField(default=False)
-    Project_DataSource_PriceUSD                 =  models.BooleanField(default=False)
-    Project_DataSourceIsPrivate                 =  models.BooleanField(default=False)
+    Project_DataSourceIsPublic                  =  models.BooleanField(default=False, help_text="It is possible to view and download All Source data")
+    Project_DataSourceSampleOnlyPublic          =  models.BooleanField(default=False, help_text="It is possible to view only first 25 lines of Source data and download only 25 first lines of Source data - it is possible to buy full data set (download) ")
+    Project_DataSource_PriceUSD                 =  models.BooleanField(default=False, help_text="If price is paid then the dataset is available for download")
+    Project_DataSourceIsPrivate                 =  models.BooleanField(default=False, help_text="It is not possible to view source data or to download source data")
 
     Project_APISolving_IsPublic                 =  models.BooleanField(default=False)
     Project_APISolving_PriceUSD                 =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3)
@@ -219,16 +216,20 @@ class Machine(models.Model, MachineMixin):
     MultipleMachine_IsAgregator                 =  models.BooleanField(default=False)
     MultipleMachine_IsElement                   =  models.BooleanField(default=False)
 
-    EncDec_ColumnsInNumericMode                 =  JSONField(default=list)
-    EncDec_ColumnsInMultiplexedMode             =  JSONField(default=list)
-    EncDec_ColumnsFLOATFrequ3Mode               =  JSONField(default=list)
+    MultipleMachine_Front_Machine_ID            = models.OneToOneField( 'Machine', related_name='MachinesFront', on_delete=models.CASCADE, blank=True, null=True )
+    MultipleMachine_Aggregator_Machine_ID       = models.OneToOneField( 'Machine', related_name='MachineAggregator',  on_delete=models.CASCADE, blank=True, null=True )
+    MultipleMachine_Elements_Machine_ID         = models.ManyToManyField( 'Machine', related_name='Machines', blank=True )
+
+    EncDec_ColumnsInNumericMode                 =  JSONField(default=dict)
+    EncDec_ColumnsInMultiplexedMode             =  JSONField(default=dict)
+    EncDec_ColumnsFLOATFrequ3Mode               =  JSONField(default=dict)
     EncDec_ColumnsFloatMostFrequMode            =  models.BinaryField(null=True)
     EncDec_ColumnsOutputInformations            =  models.BinaryField(null=True)
     EncDec_ColumnsInputEncodedCount             =  models.IntegerField(null=True)
     EncDec_ColumnsOutputEncodedCount            =  models.IntegerField(null=True)
-    EncDec_ColumnsMissingPercentage             =  JSONField( default=list )
-    EncDec_Errors                               =  JSONField( default=list )
-    EncDec_Warnings                             =  JSONField( default=list )
+    EncDec_ColumnsMissingPercentage             =  models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+    EncDec_Errors                               =  JSONField( default=dict )
+    EncDec_Warnings                             =  JSONField( default=dict )
 
     ParameterCNN_ShapeAuto                      = models.BooleanField(default=True)
 
@@ -282,18 +283,18 @@ class Machine(models.Model, MachineMixin):
     Training_AcuracyAverage                    =  models.DecimalField(null=True, max_digits=12, decimal_places=3)
     Training_LossAverage                       =  models.DecimalField(null=True, max_digits=12, decimal_places=3)
     Training_MachineModel                      =  JSONField()
-    Training_MachineWeights                    =  JSONField()
-    Training_FindParametersDelaySec            =  models.IntegerField(null=True)
-    Training_TrainingTotalDelaySec             =  models.IntegerField(null=True)
-    Training_TrainingCellDelaySec              =  models.IntegerField(null=True)
+    Training_MachineWeights                    =  models.BinaryField(null=True, blank=True)
+    Training_FindParametersDelaySec            =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
+    Training_TrainingTotalDelaySec             =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
+    Training_TrainingCellDelaySec              =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
     Training_DateTimeMachineModel              =  models.DateTimeField(null=True)
-    Training_PathLogTensorBoard                =  models.CharField(max_length=400, null=True)
+    # Training_PathLogTensorBoard                =  models.CharField(max_length=400, null=True)
     Training_FileTensorBoardLog                =  models.BinaryField(null=True)
     Training_TrainingEpochCount                =  models.IntegerField(null=True)
     Training_TrainingBatchSize                 =  models.IntegerField(null=True)
     Training_TotalTrainingLineCount            =  models.IntegerField(null=True)
     Training_TypeMachineHardware               =  models.TextField(null=True)
-    Training_DecisionTreeImage                 =  models.TextField(null=True)
+    Training_DecisionTreeImage                 =  models.BinaryField(null=True)
 
     TrainingEval_LossSampleTraining            =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
     TrainingEval_LossSampleEvaluation          =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
@@ -308,8 +309,10 @@ class Machine(models.Model, MachineMixin):
 
     def get_machine_data_input_lines_columns( self, include_predefined=False ):
         columns = list( self.AnalysisSource_ColumnType.keys() )
+
         if include_predefined:
             columns.extend( self.get_machine_data_input_lines_predefined_columns() )
+
         return columns
 
 
@@ -330,8 +333,11 @@ class Machine(models.Model, MachineMixin):
         # return instance of the Machine_<Machine_ID>_DataInputLines
         # columns = list( self.analysissource_columnnameinput ) + list( self.analysissource_columnnameoutput )
         types = dict(self.AnalysisSource_ColumnType)
+
         columns = list(types.keys())
+
         predefined_columns = self.get_machine_data_input_lines_predefined_columns()
+
         return MachineDataInputLinesModelFactory( self.Machine_ID, columns, types, predefined_columns )
 
 
@@ -342,12 +348,7 @@ class Machine(models.Model, MachineMixin):
         columns = list(types.keys())
         additional_columns = {
             "LineOutput_ID"       : models.AutoField(primary_key=True),
-            "IsForLearning"       : models.BooleanField(),
-            "IsForSolving"        : models.BooleanField(),
-            "IsWithMissingValues" : models.BooleanField(),
-            "IsForEvaluation"     : models.BooleanField(),
-            "IsLearned"           : models.BooleanField(),
-            "IsSolved"            : models.BooleanField(),
+            "Confidence"          : models.BooleanField(),
         }
         return MachineDataOutputLinesModelFactory( self.Machine_ID, columns, types, additional_columns )
 
@@ -361,6 +362,16 @@ class Machine(models.Model, MachineMixin):
         db_table = 'Machine'
         verbose_name = _('Machine')
         verbose_name_plural = _('Machines')
+        indexes = [
+            models.Index(fields=['Machine_ID']),
+            models.Index(fields=['DateTimeCreation']),
+            models.Index(fields=['Owner_User_ID']),
+            models.Index(fields=['Owner_Team_ID']),
+        ]
+
+
+    def __str__( self ):
+        return f'{self.Project_Name} ({self.Machine_ID})'
 
 
 class MachineMessage(models.Model):
@@ -369,7 +380,7 @@ class MachineMessage(models.Model):
     message = models.TextField(_('Message'))
     message_file = models.FileField(_('file'), null=True, blank=True,
                                 upload_to='machinemessage/%Y-%m-%d/%H-%M')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE,
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                         null=True, blank=True)
 
     def __str__(self):

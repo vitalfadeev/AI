@@ -1,12 +1,16 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+
 from user.forms import EditProfileForm
 from team.models import Team
 
 from user.serializers import UserSerializer
-from django.contrib.auth.models import User
 from rest_framework import generics, viewsets
 from rest_framework import mixins
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 # Create your views here.
@@ -51,7 +55,7 @@ class UserViewSet(mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin,
                   mixins.DestroyModelMixin,
                   viewsets.GenericViewSet):
-    #permission_classes = ( IsAuthenticated, )
+    permission_classes = ( IsAuthenticated, )
     serializer_class = UserSerializer
     queryset = User.objects.all()
     # + graph.render_div()

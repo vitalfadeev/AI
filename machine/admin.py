@@ -24,21 +24,6 @@ class MachineAdmin(admin.ModelAdmin):
 admin.site.register(Machine, MachineAdmin)
 
 
-# machine = Machine.objects.get( Machine_ID=2 )
-# m = machine.get_machine_data_input_lines_model()
-#
-# def mF(machine):
-#     cls = type( 'mAdmin', (admin.ModelAdmin,), {
-#         '__doc__': 'class created by type',
-#         'list_display': machine.AnalysisSource_ColumnsNameInput,
-#     } )
-#     return  cls
-#
-# cls = mF(machine)
-#
-# admin.site.register(m, cls)
-#
-
 @login_required
 def AdminDataInputLines( request, Machine_ID ):
     machine = get_object_or_404( Machine, pk=Machine_ID )

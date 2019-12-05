@@ -1,8 +1,12 @@
 {% extends "base_public.html" %}
 {% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% providers_media_js %}
 
 {% load widget_tweaks %}
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
+
 
 {% block content %}
 <div class="row">
@@ -38,7 +42,9 @@
             <br>
             <button type="submit" class="btn btn-outline-dark  mb-3">Sign in</button>
           </form>
-          <br>
+
+          <br/>
+
       </div>
 </div>
 
@@ -46,9 +52,9 @@
 <!-- Social registration -->
 <div class="row">
      <div class="col s6 offset-s3 center-align">
-          {% if socialaccount_providers %}
+          {% if 1 %}
             <div class="">
-              <a href="" class="btn btn-outline-dark col s12 mb-2">
+              <a href="{% provider_login_url 'google' method='js_sdk' %}" class="btn btn-outline-dark col s12 mb-2">
                   Login with Google
               </a>
             </div>
@@ -58,12 +64,10 @@
 <div class="row">
      <div class="col s6 offset-s3 center-align">
             <div class="">
-              <a href="" class="btn btn-outline-dark col s12 mb-2">
+              <a href="{% provider_login_url 'facebook' method='js_sdk' %}" class="btn btn-outline-dark col s12 mb-2">
                   Login with Facebook
               </a>
             </div>
-
-            {% include "socialaccount/snippets/login_extra.html" %}
 
           {% else %}
             <p>{% blocktrans %}If you have not created an account yet, then please

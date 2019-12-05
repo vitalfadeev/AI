@@ -43,15 +43,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
     'corsheaders',
-#    'datatableview',
     'widget_tweaks',
-#    'material',
     'core',
-#    'core.batchs',
-
-    'rest_framework',
-
     'user',
+    'rest_framework',
     'team',
     'machine',
     'work',
@@ -181,6 +176,8 @@ ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_EMAIL_FIELD = "Email"
 
 #
 EMAIL_USE_TLS = True
@@ -189,11 +186,8 @@ EMAIL_HOST_USER = 'youremail@gmail.com'
 EMAIL_HOST_PASSWORD = 'yourpassword'
 EMAIL_PORT = 587
 
-# DATABASE_ENGINE = 'mysql://user:password@localhost/AI'
-
-
 if os.path.isfile( os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_setting.py") ):
-    from  .local_setting import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DATABASES
+    from  .local_setting import *
 
 
 REST_FRAMEWORK = {
@@ -211,9 +205,6 @@ SILENCED_SYSTEM_CHECKS = ["django_mysql.E016"]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-# AUTH_PROFILE_MODULE = 'user.User'
-
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -224,3 +215,43 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+AUTH_USER_MODEL = 'user.User'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.12',
+    },
+     'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+
+SOCIALACCOUNT_ADAPTER = "core.account_adapter.AccountAdapter"

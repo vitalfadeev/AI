@@ -331,23 +331,7 @@ Because tables have foreign keys, needed migrate in specific order,
 _django_tables() {
     _message "Creating Django tables"
     cd ${SITE_FOLDER}
-    for folder in ./*
-    do
-        [ -d $folder/migrations  ] && rm -rf $folder/migrations
-    done
-
     source venv/bin/activate
-    ./manage.py makemigrations user
-    ./manage.py migrate
-    ./manage.py makemigrations team
-    ./manage.py migrate
-    ./manage.py makemigrations machine
-    ./manage.py migrate
-    ./manage.py makemigrations graph
-    ./manage.py migrate
-    ./manage.py makemigrations communication
-    ./manage.py migrate
-    ./manage.py makemigrations consulting
     ./manage.py migrate
 }
 ```
