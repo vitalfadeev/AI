@@ -166,7 +166,7 @@ def get_upload_path( instance, filename ):
 class Machine(models.Model, MachineMixin):
     Machine_ID                                  =  models.AutoField(primary_key=True, help_text="Generated auto")
     DateTimeCreation                            =  models.DateTimeField(auto_now_add=True)
-    Machine_ID_Original                         =  models.IntegerField(null=True, help_text="If this machine is a copy of another machine, then this is the source machine ID")
+    Machine_ID_Original                         =  models.ForeignKey('self', related_name="OriginalChilds", on_delete=models.SET_NULL, null=True, help_text="If this machine is a copy of another machine, then this is the source machine ID")
 
     Owner_User_ID                               =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'), help_text="Owner of this machine")
     Owner_Team_ID                               =  models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Team'), help_text="Team_ID owner ")
@@ -182,129 +182,87 @@ class Machine(models.Model, MachineMixin):
     Project_DataSource_PriceUSD                 =  models.BooleanField(default=False, help_text="If price is paid then the dataset is available for download")
     Project_DataSourceIsPrivate                 =  models.BooleanField(default=False, help_text="It is not possible to view source data or to download source data")
 
-    Project_APISolving_IsPublic                 =  models.BooleanField(default=False)
-    Project_APISolving_PriceUSD                 =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3)
+    Project_APISolving_IsPublic                 =  models.BooleanField(default=False, help_text="Allow everyone to request solving to the API _ Machine Owner receive credits")
+    Project_APISolving_PriceUSD                 =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3, help_text="Price asked by Owner for each line solved")
 
-    Project_MachineIsDuplicatable               =  models.BooleanField(default=False)
-    Project_MachineCopyCostUSD                  =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3)
-    Project_MachineCopyUpdateCostUSD            =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3)
+    Project_MachineIsDuplicatable               =  models.BooleanField(default=False, help_text="Allow or not to copy the Machine model")
+    Project_MachineCopyCostUSD                  =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3, help_text="Cost asked by owner for the duplication")
+    Project_MachineCopyUpdateCostUSD            =  models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=3, help_text="Cost asked by owner for updating the duplicate")
 
-    Project_MachineIsExportable                 =  models.BooleanField(default=False)
-    Project_MachineExportCostUSD                =  models.DecimalField (null=True, blank=True, max_digits=12, decimal_places=3)
+    Project_MachineIsExportable                 =  models.BooleanField(default=False, help_text="Allow or not to export the Machine model in Python code")
+    Project_MachineExportCostUSD                =  models.DecimalField (null=True, blank=True, max_digits=12, decimal_places=3, help_text="Cost asked by owner for exporting to python")
 
-    Project_ColumnsDescription                  =  JSONField(default=dict, blank=True)
+    Project_ColumnsDescription                  =  JSONField(default=list, blank=True, help_text="possibility to put some special keywords : (  __Keep_Only_Values__) (__ONLY_LINES_WITH_OPTIONS__  : list of values) ")
 
     AnalysisSource_ColumnsNameInput             =  JSONField(default=dict, blank=True)
     AnalysisSource_ColumnsNameOutput            =  JSONField(default=dict, blank=True)
-    AnalysisSource_ColumnType                   =  JSONField(default=dict)
-    AnalysisSource_Errors                       =  JSONField(default=dict, blank=True)
-    AnalysisSource_Warnings                     =  JSONField(default=dict, blank=True)
-    AnalysisSource_ColumnsMissingPercentage     =  JSONField(default=dict)
-    AnalysisSource_ListMaxSize                  =  JSONField(default=dict)
+    AnalysisSource_ColumnType                   =  JSONField(default=dict, help_text="ColumnType[] : [EMPTY, Numerical, Date, Tags, boolean, Options,DateTime,Time] ")
+    AnalysisSource_Errors                       =  JSONField(default=dict, blank=True, help_text="TextError : Errors ")
+    AnalysisSource_Warnings                     =  JSONField(default=dict, blank=True, help_text="TextWarning: warning")
+    AnalysisSource_ColumnsMissingPercentage     =  JSONField(default=dict, help_text="Indicate percentage of missing values in the column (for training line)")
+    AnalysisSource_ListMaxSize                  =  JSONField(default=dict, help_text="For JSON columns it indicate the maximum count of values // for Text-Words and Text-Sentence Text-Paragraphs datatype, it indicate the maximum count of Words // for JSON_Array_Of_Array it indicate the listmaxsize of 2 axes")
 
     Machine_IsDataMissingTolerant               =  models.BooleanField(default=False)
     Machine_IsLevelTrainingNormal               =  models.BooleanField(default=False)
     Machine_IsLevelTrainingMaximum              =  models.BooleanField(default=False)
     Machine_IsMultipleMachine                   =  models.BooleanField(default=False)
-    Machine_IsReRunTraining                     =  models.BooleanField(default=False)
-    Machine_IsToRunAFP                          =  models.BooleanField(default=False)
-    Machine_IsToRunARUC                         =  models.BooleanField(default=False)
-    Machine_IsModeLSTM                          =  models.BooleanField(default=False)
-    Machine_IsModeRNN                           =  models.BooleanField(default=False)
+    Machine_IsReRunTraining                     =  models.BooleanField(default=False, help_text="If 1 WorkProcessor will start Training")
+    Machine_IsToRunAFP                          =  models.BooleanField(default=False, help_text="If 1 WorkProcessor will start AFP ")
+    Machine_IsToRunARUC                         =  models.BooleanField(default=False, help_text="If 1 WorkProcessor will do ARUC after trainning   (ARUC = Auto Remove Useless Columns)")
+    Machine_IsModeLSTM                          =  models.BooleanField(default=False, help_text="If 1 model with have one or more LSTM layer")
+    Machine_IsModeRNN                           =  models.BooleanField(default=False, help_text="If 1 model with have only DENSE layer and no LSTM layer")
 
-    MultipleMachine_IsFront                     =  models.BooleanField(default=False)
-    MultipleMachine_IsAgregator                 =  models.BooleanField(default=False)
-    MultipleMachine_IsElement                   =  models.BooleanField(default=False)
+    MultipleMachine_IsFront                     =  models.BooleanField(default=False, help_text="True if the Machine is Front of MultipleMachine")
+    MultipleMachine_IsAgregator                 =  models.BooleanField(default=False, help_text="True if the Machine is agregator of MultipleMachine")
+    MultipleMachine_IsElement                   =  models.BooleanField(default=False, help_text="True if the Machine is elelement of MultipleMachine")
 
-    MultipleMachine_Front_Machine_ID            = models.OneToOneField( 'Machine', related_name='MachinesFront', on_delete=models.CASCADE, blank=True, null=True )
-    MultipleMachine_Aggregator_Machine_ID       = models.OneToOneField( 'Machine', related_name='MachineAggregator',  on_delete=models.CASCADE, blank=True, null=True )
-    MultipleMachine_Elements_Machine_ID         = models.ManyToManyField( 'Machine', related_name='Machines', blank=True )
+    MultipleMachine_Front_Machine_ID            = models.ForeignKey( 'self', related_name="FrontChilds", on_delete=models.CASCADE, blank=True, null=True , help_text="Machine_ID of the Front Machine")
+    MultipleMachine_Aggregator_Machine_ID       = models.ForeignKey( 'self', related_name="AggregatorChilds", on_delete=models.CASCADE, blank=True, null=True , help_text="Machine_ID of the Machine aggregator")
+    MultipleMachine_Elements_Machine_ID         = models.ManyToManyField( 'self', related_name="Elements5Childs", blank=True , help_text="List of Machine_ID of the Machine elements")
 
-    EncDec_ColumnsInNumericMode                 =  JSONField(default=dict)
-    EncDec_ColumnsInMultiplexedMode             =  JSONField(default=dict)
-    EncDec_ColumnsFLOATFrequ3Mode               =  JSONField(default=dict)
-    EncDec_ColumnsFloatMostFrequMode            =  models.BinaryField(null=True)
-    EncDec_ColumnsOutputInformations            =  models.BinaryField(null=True)
-    EncDec_ColumnsInputEncodedCount             =  models.IntegerField(null=True)
-    EncDec_ColumnsOutputEncodedCount            =  models.IntegerField(null=True)
-    EncDec_ColumnsMissingPercentage             =  models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-    EncDec_Errors                               =  JSONField( default=dict )
-    EncDec_Warnings                             =  JSONField( default=dict )
+    EncDec_ColumnsInNumericMode                 =  JSONField(default=dict, help_text="By default  (AnalysisSource_ColumnsNameInput)=true and AnalysisSource_ColumnsNameOutput=false  --- (AnalysisSource_ColumnsNameOutput cannot be both numeric and multiplexed)")
+    EncDec_ColumnsInMultiplexedMode             =  JSONField(default=dict, help_text="By default  (AnalysisSource_ColumnsNameInput)=true and AnalysisSource_ColumnsNameOutput=true --- (AnalysisSource_ColumnsNameOutput cannot be both numeric and multiplexed)")
+    EncDec_ColumnsFLOATFrequ3Mode               =  JSONField(default=dict, help_text="Create 3 columns Rare/Occasional/Normal for FLOAT columns")
+    EncDec_ColumnsFloatMostFrequMode            =  JSONField(default=dict, help_text="for FLOAT columns will Create 10 columns boolean for the 10 most frequents FLOAT values ")
+    EncDec_ColumnsInputInformations             =  models.BinaryField(null=True, help_text="Note : contains : InfoForEncodeDecodeColumns")
+    EncDec_ColumnsOutputInformations            =  models.BinaryField(null=True, help_text="Note : contains : InfoForDecodeOutputColumns")
+    EncDec_ColumnsInputEncodedCount             =  models.IntegerField(null=True, help_text="Count of encoded inputs columns ")
+    EncDec_ColumnsOutputEncodedCount            =  models.IntegerField(null=True, help_text="Count of encoded output columns ")
+    EncDec_ColumnsMissingPercentage             =  JSONField( default=dict, help_text="Indicate percentage of missing values in the column (for training line)")
+    EncDec_Errors                               =  JSONField( default=dict, help_text="Dict of ColumnSourceName(not encoded column name) contains one string with all warnings" )
+    EncDec_Warnings                             =  JSONField( default=dict, help_text="Dict of ColumnSourceName(not encoded column name) contains one string with all errors" )
 
     ParameterCNN_ShapeAuto                      = models.BooleanField(default=True)
+    ParameterCNN_Loss                           = models.CharField(_('Loss'), max_length=100, null=True, blank=True)
+    ParameterCNN_Optimizer                      = models.CharField(_('Optimizer'), max_length=150, null=True, blank=True)
+    ParameterCNN_Shape                          =  JSONField( default=list, help_text="One string contains json array[10] of array[4]" )
+    ParameterCNN_BatchEpochAuto                 =  models.BooleanField(_('Batch Epoch Auto'), default=True)
+    ParameterCNN_BatchSize                      =  models.PositiveIntegerField(_('Batch Size'), default=1, null=True, blank=True, help_text="user can set this value manually, they will be used only if ParameterCNN_BatchEpochAuto=0")
+    ParameterCNN_Epoch                          =  models.PositiveIntegerField(_('Epoch'), default=1, null=True, blank=True, help_text="user can set this value manually, they will be used only if ParameterCNN_BatchEpochAuto=0")
 
-    LOSS_CHOICES = [
-        ('BinaryCrossentropy', 'Binary Crossentropy'),
-        ('SquaredHinge', 'Squared Hinge'),
-        ('Poisson', 'Poisson'),
-        ('MeanSquaredError', 'Mean Squared Error'),
-        ('MeanAbsoluteError', 'Mean Absolute Error'),
-        ('Huber', 'Huber'),
-        ('Hinge', 'Hinge'),
-        ('CosineSimilarity', 'Cosine Similarity'),
-    ]
-    ParameterCNN_Loss               = models.CharField(_('Loss'),
-                                        choices=LOSS_CHOICES, max_length=50,
-                                        default='BinaryCrossentropy',
-                                        null=True, blank=True)
-    OPTIMIZER_CHOICES = [
-        ('SGD', 'SGD'),
-        ('RMSprop', 'RMSprop'),
-        ('Adadelta', 'Adadelta'),
-        ('Adam', 'Adam'),
-        ('Adamax', 'Adamax'),
-        ('Nadam', 'Nadam'),
-    ]
-    ParameterCNN_Optimizer          = models.CharField(_('Optimizer'),
-                                        choices=OPTIMIZER_CHOICES, max_length=50,
-                                        default='SGD', null=True, blank=True)
-
-    SHAPE_CHOICES = [
-        ('softmax', 'softmax'),
-        ('elu', 'elu'),
-        ('selu', 'selu'),
-        ('softplus', 'softplus'),
-        ('softsign', 'softsign'),
-        ('relu', 'relu'),
-        ('tanh', 'tanh'),
-        ('hard_sigmoid', 'hard_sigmoid'),
-        ('exponential', 'exponential'),
-        ('linear', 'linear'),
-        ('dropout','dropout'),
-        ('batchnormalization','batchnormalization'),
-    ]
-    
-    ParameterCNN_Shape                         =  models.CharField(_('Shape'), max_length=400, default=str([]), null=True, blank=True)
-
-    ParameterCNN_BatchEpochAuto                =  models.BooleanField(_('Batch Epoch Auto'), default=True)
-    ParameterCNN_BatchSize                     =  models.PositiveIntegerField(_('Batch Size'), default=1, null=True, blank=True)
-    ParameterCNN_Epoch                         =  models.PositiveIntegerField(_('Epoch'), default=1, null=True, blank=True)
-
-    Training_AcuracyAverage                    =  models.DecimalField(null=True, max_digits=12, decimal_places=3)
-    Training_LossAverage                       =  models.DecimalField(null=True, max_digits=12, decimal_places=3)
-    Training_MachineModel                      =  JSONField()
-    Training_MachineWeights                    =  models.BinaryField(null=True, blank=True)
+    Training_AcuracyAverage                    =  models.DecimalField(null=True, max_digits=12, decimal_places=3, help_text="Average of acuracy of all columns")
+    Training_LossAverage                       =  models.DecimalField(null=True, max_digits=12, decimal_places=3, help_text="Average of loss of all columns")
+    Training_MachineModel                      =  models.BinaryField(null=True, blank=True, help_text="to save now in SQL the model ")
+    Training_MachineWeights                    =  models.BinaryField(null=True, blank=True, help_text="to save now in SQL the weight")
     Training_FindParametersDelaySec            =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
-    Training_TrainingTotalDelaySec             =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
-    Training_TrainingCellDelaySec              =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True)
-    Training_DateTimeMachineModel              =  models.DateTimeField(null=True)
-    # Training_PathLogTensorBoard                =  models.CharField(max_length=400, null=True)
+    Training_TrainingTotalDelaySec             =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True, help_text="Total training time  ")
+    Training_TrainingCellDelaySec              =  models.DecimalField(max_digits=6, decimal_places=3, null=True, blank=True, help_text="Total training time / ( LEN( AnalysisSource_ColumnsNameInput ) + LEN( AnalysisSource_ColumnsNameOutput ) ) / Training_TotalTrainingLineCount")
+    Training_DateTimeMachineModel              =  models.DateTimeField(null=True, help_text="DateTime of last update of this Machine model (updated after each training)")
     Training_FileTensorBoardLog                =  models.BinaryField(null=True)
-    Training_TrainingEpochCount                =  models.IntegerField(null=True)
-    Training_TrainingBatchSize                 =  models.IntegerField(null=True)
-    Training_TotalTrainingLineCount            =  models.IntegerField(null=True)
-    Training_TypeMachineHardware               =  models.TextField(null=True)
-    Training_DecisionTreeImage                 =  models.BinaryField(null=True)
+    Training_TrainingEpochCount                =  models.IntegerField(null=True, help_text="How many Epoch was done for training")
+    Training_TrainingBatchSize                 =  models.IntegerField(null=True, help_text="what was the batch size used during training")
+    Training_TotalTrainingLineCount            =  models.IntegerField(null=True, help_text="How many line was in the training data")
+    Training_TypeMachineHardware               =  models.TextField(null=True, help_text="Type of hardware like 'I9700_GTX1060'")
+    Training_DecisionTreeImage                 =  models.BinaryField(null=True, help_text="Image file PNG of the decision tree of the DatInput")
 
-    TrainingEval_LossSampleTraining            =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_LossSampleEvaluation          =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_LossSampleTrainingNoise       =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_LossSampleEvaluationNoise     =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_AcuracySampleTraining         =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_AcuracySampleEvaluation       =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_AcuracySampleTrainingNoise    =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    TrainingEval_AcuracySampleEvaluationNoise  =  models.DecimalField(max_digits=12, decimal_places=3, null=True)
-
+    TrainingEval_LossSampleTraining            =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="loss on training lines")
+    TrainingEval_LossSampleEvaluation          =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="loss on evaluation lines")
+    TrainingEval_LossSampleTrainingNoise       =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="loss on training when we add 5% noise ")
+    TrainingEval_LossSampleEvaluationNoise     =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="loss on evaluation when we add 5% noise ")
+    TrainingEval_AcuracySampleTraining         =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="acuracy on training lines")
+    TrainingEval_AcuracySampleEvaluation       =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="acuracy on evaluation lines")
+    TrainingEval_AcuracySampleTrainingNoise    =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="acuracy on training when we add 5% noise ")
+    TrainingEval_AcuracySampleEvaluationNoise  =  models.DecimalField(max_digits=12, decimal_places=3, null=True, help_text="acuracy on evaluation when we add 5% noise")
 
 
     def get_machine_data_input_lines_columns( self, include_predefined=False ):
