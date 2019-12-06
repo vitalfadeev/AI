@@ -16,7 +16,7 @@ from pandas.tests.io.json.test_ujson import orient
 from rest_framework.exceptions import ValidationError
 
 from machine.analyzer.DataPreAnalyser import analyse_source_data_find_input_output
-from machine.loader.create import create_model_table
+from machine.loader.create import create_model_table, create_data_tables
 
 
 class BulkCreateManager(object):
@@ -131,11 +131,11 @@ def prenanlyze( machine, url, file_handle ):
 
 
 def load( url, machine ):
-    # Input data Dynamic model
-    MachineDataInputLines = machine.get_machine_data_input_lines_model()
+    # Create Input and Output tables
+    create_data_tables( machine )
 
-    # Create Input data tabe
-    create_model_table( MachineDataInputLines )
+    # Get model DataInputLines
+    MachineDataInputLines = machine.get_machine_data_input_lines_model()
 
     # Load data
     if hasattr(machine, "_dataframe"):
@@ -145,33 +145,3 @@ def load( url, machine ):
         # load dataset from file
         dataframe = load_to_dataframe( url, file_handle=None )
 
-    # # Create Columns
-    # machine_input = []
-    # machine_output = []
-    # machine_ignore = []
-    #
-    # for col in dataframe:
-    #     if col in pre_analysis.column_names_input:
-    #         machine.analysis_source_columns.create(
-    #                                         column_type="IN",
-    #                                         name=col, desc=" "
-    #                                     )
-    #         machine_input.append(col.replace('_',' '))
-    #     elif col in pre_analysis.column_names_output:
-    #         machine.analysis_source_columns.create(
-    #                                         column_type="OUT",
-    #                                         name=col, desc=" "
-    #                                     )
-    #         machine_output.append(col.replace('_',' '))
-    #
-    #     else:
-    #         machine.analysis_source_columns.create(
-    #                                         column_type="IGN",
-    #                                         name=col, desc=" "
-    #                                     )
-    #         machine_ignore.append(col.replace('_',' '))
-    #
-    # machine.analysissource_columnnameinput = machine_input
-    # machine.analysissource_columnnameoutput = machine_output
-    # machine.analysissource_columnnameignore = machine_ignore
-    #

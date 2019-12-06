@@ -5,137 +5,147 @@
 
 {% block main %}
 
+    <style>
+      #machine-data-input-table-fixed {
+        position: fixed;
+        z-index: 999;
+        background: white;
+        width: 50%;
+      }
+      #machine-data-input-table {
+        font-size: 11px;
+      }
+      #machine-data-input-table td {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      table.dataTable {
+        margin: 0 !important;
+      }
+    </style>
+
+    <!-- Machine Input Data -->
+    <div class="row">
+        <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
+
+              <table id="machine-data-input-table" data-ajax-url="/Machine/{{Machine_ID}}/datatable-ajax" data-dom="rpt" data-page-length="5"  data-scroll-X=true  data-order="[]" class="striped">
+
+                <thead>
+                  <tr>
+                    {% for column in columns %}
+                      <td>{{ column }}</td>
+                    {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody></tbody>
+
+              </table>
+
+              {% include "datatables.html" with table="#machine-data-input-table" page_length=5 %}
+
+        </div>
+    </div>
+
+    <!-- Machine Settings -->
     <div class="row">
 
         <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
             <div class="section">
 
-                <!-- Machine Input Data -->
-                <style>
-                  #machine-data-input-table {
-                    font-size: 11px;
-                  }
-                  #machine-data-input-table td {
-                    padding-top: 0;
-                    padding-bottom: 0;
-                  }
-                  table.dataTable {
-                    margin: 0 !important;
-                  }
-                </style>
+                <div>
 
-                <table id="machine-data-input-table" data-ajax-url="/Machine/{{Machine_ID}}/datatable-ajax" data-dom="rpt" data-page-length="5"  data-scroll-X=true  data-order="[]" class="striped">
+                  <form id="form-machine-edit" action="" method="POST" enctype="multipart/form-data">
 
-                  <thead>
-                    <tr>
-                      {% for column in columns %}
-                        <td>{{ column }}</td>
-                      {% endfor %}
-                    </tr>
-                  </thead>
+                      {% csrf_token %}
 
-                  <tbody></tbody>
+                      {{ form.errors }}
 
-                </table>
+                      {{ form.Project_ColumnsDescription.as_hidden }}
+                      {{ form.AnalysisSource_ColumnsNameInput.as_hidden }}
+                      {{ form.AnalysisSource_ColumnsNameOutput.as_hidden }}
+                      {{ form.AnalysisSource_ColumnType.as_hidden }}
+                      {{ form.AnalysisSource_Errors.as_hidden }}
+                      {{ form.AnalysisSource_Warnings.as_hidden }}
 
-                {% include "datatables.html" with table="#machine-data-input-table" page_length=5 %}
-                <br>
+                      <table id="table-machine-settings" >
+                        <thead>
+                          <tr>
+                            <th>Column</th>
+                            <th>Type</th>
+                            <th>Input</th>
+                            <th>Output</th>
+                            <th>Errors</th>
+                            <th>Warnings</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
 
-                <!-- Machine Settings -->
-                <form id="form-machine-edit" action="" method="POST" enctype="multipart/form-data">
+                        <tbody>
+                          {% for column in columns %}
+                          <tr>
 
-                    {% csrf_token %}
+                            <td class="td-name">{{column}}</td>
 
-                    {{ form.errors }}
+                            <td class="td-type">
+                              <div class="">
+                                <select class="browser-default">
+                                  <option value="EMPTY">EMPTY</option>
+                                  <option value="OPTION">OPTION</option>
+                                  <option value="NUMERIC">NUMERIC</option>
+                                  <option value="FLOAT">FLOAT</option>
+                                  <option value="TAGS">TAGS</option>
+                                  <option value="TAGS_WEIGHT">TAGS_WEIGHT</option>
+                                  <option value="LABEL">LABEL</option>
+                                  <option value="LABEL_LARGE">LABEL_LARGE</option>
+                                  <option value="TEXT">TEXT</option>
+                                  <option value="TEXT_WORDS_PKN_SMALL">TEXT_WORDS_PKN_SMALL</option>
+                                  <option value="TEXT_WORDS_PKN_LARGE">TEXT_WORDS_PKN_LARGE</option>
+                                  <option value="TEXT_SENTENCE">TEXT_SENTENCE</option>
+                                  <option value="TEXT_PARAGRAPH">TEXT_PARAGRAPH</option>
+                                  <option value="DATE">DATE</option>
+                                  <option value="DATE_LARGE">DATE_LARGE</option>
+                                  <option value="TIME">TIME</option>
+                                  <option value="DATETIME">DATETIME</option>
+                                  <option value="DATETIME_LARGE">DATETIME_LARGE</option>
+                                  <option value="JSON">JSON</option>
+                                  <option value="EMPTY">EMPTY</option>
+                                </select>
+                              </div>
+                            </td>
 
-                    {{ form.Project_ColumnsDescription.as_hidden }}
-                    {{ form.AnalysisSource_ColumnsNameInput.as_hidden }}
-                    {{ form.AnalysisSource_ColumnsNameOutput.as_hidden }}
-                    {{ form.AnalysisSource_ColumnType.as_hidden }}
-                    {{ form.AnalysisSource_Errors.as_hidden }}
-                    {{ form.AnalysisSource_Warnings.as_hidden }}
+                            <td class="td-in">
+                              <label><input name="group-{{forloop.counter}}" type="checkbox" value="IN"/><span></span></label>
+                            </td>
 
-                    <table id="table-machine-settings" >
-                      <thead>
-                        <tr>
-                          <th>Column</th>
-                          <th>Type</th>
-                          <th>Input</th>
-                          <th>Output</th>
-                          <th>Ignore</th>
-                          <th>Errors</th>
-                          <th>Warnings</th>
-                          <th>Description</th>
-                        </tr>
-                      </thead>
+                            <td class="td-out">
+                              <label><input name="group-{{forloop.counter}}" type="checkbox" value="OUT" /><span></span></label>
+                            </td>
 
-                      <tbody>
-                        {% for column in columns %}
-                        <tr>
+                            <td class="td-error">
+                            </td>
 
-                          <td class="td-name">{{column}}</td>
+                            <td class="td-warning">
+                            </td>
 
-                          <td class="td-type">
-                            <div class="">
-                              <select class="browser-default">
-                                <option value="EMPTY">EMPTY</option>
-                                <option value="OPTION">OPTION</option>
-                                <option value="NUMERIC">NUMERIC</option>
-                                <option value="FLOAT">FLOAT</option>
-                                <option value="TAGS">TAGS</option>
-                                <option value="TAGS_WEIGHT">TAGS_WEIGHT</option>
-                                <option value="LABEL">LABEL</option>
-                                <option value="LABEL_LARGE">LABEL_LARGE</option>
-                                <option value="TEXT">TEXT</option>
-                                <option value="TEXT_WORDS_PKN_SMALL">TEXT_WORDS_PKN_SMALL</option>
-                                <option value="TEXT_WORDS_PKN_LARGE">TEXT_WORDS_PKN_LARGE</option>
-                                <option value="TEXT_SENTENCE">TEXT_SENTENCE</option>
-                                <option value="TEXT_PARAGRAPH">TEXT_PARAGRAPH</option>
-                                <option value="DATE">DATE</option>
-                                <option value="DATE_LARGE">DATE_LARGE</option>
-                                <option value="TIME">TIME</option>
-                                <option value="DATETIME">DATETIME</option>
-                                <option value="DATETIME_LARGE">DATETIME_LARGE</option>
-                                <option value="JSON">JSON</option>
-                                <option value="EMPTY">EMPTY</option>
-                              </select>
-                            </div>
-                          </td>
+                            <td class="td-description">
+                              <textarea></textarea>
+                            </td>
 
-                          <td class="td-in">
-                            <label><input name="group-{{forloop.counter}}" type="radio" value="IN"/><span></span></label>
-                          </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
 
-                          <td class="td-out">
-                            <label><input name="group-{{forloop.counter}}" type="radio" value="OUT" /><span></span></label>
-                          </td>
+                      <div class="row">
+                        <button class="btn waves-effect waves-light" type="submit" name="action">Next
+                          <i class="material-icons right">send</i>
+                        </button>
+                      </div>
 
-                          <td class="td-ignore">
-                            <label><input name="group-{{forloop.counter}}" type="radio" value="IGN" /><span></span></label>
-                          </td>
+                  </form>
 
-                          <td class="td-error">
-                          </td>
-
-                          <td class="td-warning">
-                          </td>
-
-                          <td class="td-description">
-                            <textarea></textarea>
-                          </td>
-
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-
-                    <div class="row">
-                      <button class="btn waves-effect waves-light" type="submit" name="action">Next
-                        <i class="material-icons right">send</i>
-                      </button>
-                    </div>
-
-                </form>
+                </div>
 
                 <script type="text/javascript">
                   var form = document.getElementById("form-machine-edit");
@@ -165,10 +175,9 @@
                     var tr = trs[i];
 
                     tr.querySelector(".td-name").innerHTML             = name;
-                    tr.querySelector(".td-type select").value          = types[name];
-                    tr.querySelector(".td-in input").checked           = ins.includes( name );
-                    tr.querySelector(".td-out input").checked          = outs.includes( name );
-                    tr.querySelector(".td-ignore input").checked       = !ins.includes( name ) && !outs.includes( name );
+                    tr.querySelector(".td-type select").value          = types[ name ];
+                    tr.querySelector(".td-in input").checked           = ins.hasOwnProperty(name) ? ins[ name ] : false;
+                    tr.querySelector(".td-out input").checked          = outs.hasOwnProperty(name) ? outs[ name ] : false;
                     tr.querySelector(".td-error").innerHTML            = errs.hasOwnProperty(name) ? errs[name] : '';
                     tr.querySelector(".td-warning").innerHTML          = warns.hasOwnProperty(name) ? warns[name] : '';
                     tr.querySelector(".td-description textarea").value = descs.hasOwnProperty(name) ? descs[name] : '';
@@ -177,8 +186,10 @@
                   // on submit
                   document.getElementById( 'form-machine-edit' ).addEventListener('submit', function() {
 
-                    var ins = [];
-                    var outs = [];
+                    var outs = {};
+                    var ins = {};
+                    var types = {};
+                    var descs = {};
 
                     // read controls
                     for (var i = 0; i < names.length; i++) {
@@ -186,15 +197,12 @@
                       var tr = trs[i];
 
                       var e = tr.querySelector(".td-type select");
-                      types[name] = e.options[e.selectedIndex].value;
+                      types[ name ] = e.options[e.selectedIndex].value;
 
-                      if (tr.querySelector(".td-out input").checked)
-                        outs.push( name );
+                      outs[ name ] = tr.querySelector(".td-out input").checked;
+                      ins[ name ] = tr.querySelector(".td-in input").checked;
 
-                      if (tr.querySelector(".td-in input").checked)
-                        ins.push( name );
-
-                      descs[name] = tr.querySelector(".td-description textarea").value;
+                      descs[ name ] = tr.querySelector(".td-description textarea").value;
                     }
 
                     // update vars
