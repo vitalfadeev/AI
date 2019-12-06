@@ -45,8 +45,8 @@ pip install -r requirements.txt
 
 # Updating DB structure
 _message "Updating DB structure"
-python ./manage.py makemigrations
 python ./manage.py migrate
+python ./manage.py migrate globallogger --database=GlobalLogger
 
 
 # Reloading Apache
