@@ -30,6 +30,7 @@ cd ${SITE}
 # Note: deploy was created by command: git remote add deploy ssh://git@github.com/vitalfadeev/AI.git
 _message "Getting fresh sources"
 git pull deploy master
+git reset --hard origin/master
 
 
 # Activating Virtual environment
