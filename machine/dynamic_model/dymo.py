@@ -278,7 +278,7 @@ def get_dynamic_model_from_table( base_classes, class_name, from_table, app_labe
     return model
 
 
-def DynamicModel( base_classes, class_name, table, fields, app_label, module_name, primary_key_column, db_scheme="default" ):
+def DynamicModel( base_classes, class_name, table, fields, app_label, module_name, primary_key_column, db_name="default" ):
     """
     Dynamic Django Model factory
     - create model
@@ -298,6 +298,6 @@ def DynamicModel( base_classes, class_name, table, fields, app_label, module_nam
     except LookupError:
         # create
         model = create_model( base_classes, class_name, fields, app_label=app_label, module=module_name, options={'db_table':table} )
-        model._meta.db_scheme = db_scheme
+        model._meta._db_name = db_name
 
     return model

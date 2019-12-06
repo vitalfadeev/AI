@@ -1,6 +1,8 @@
-def _get_db_schema( model ):
-    if hasattr( model._meta, "db_scheme" ) and model._meta.db_scheme is not None:
-        return model._meta.db_scheme
+def _get_db_name( model ):
+    if hasattr( model._meta, "_db_name" ) and model._meta._db_name is not None:
+        return model._meta._db_name
+    if model._meta.db_table == 'GlobalLogger':
+        return 'GlobalLogger'
     return None
 
 
@@ -13,23 +15,28 @@ class DBRouter(object):
         """
         Attempts to read auth models go to auth_db.
         """
-        return _get_db_schema( model )
+        return _get_db_name( model )
 
     def db_for_write(self, model, **hints):
         """
         Attempts to write auth models go to auth_db.
         """
-        return _get_db_schema( model )
+        return _get_db_name( model )
 
     def allow_relation(self, obj1, obj2, **hints):
         """
         Allow relations if a model in the auth app is involved.
         """
-        return _get_db_schema( obj1 )
+        return _get_db_name( obj1 )
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """
         Make sure the auth app only appears in the 'auth_db'
         database.
         """
-        return db == 'default'
+        if db == 'GlobalLogger':
+            return True
+        if db == 'default':
+            return True
+        else:
+            return False

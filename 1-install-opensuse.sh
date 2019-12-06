@@ -202,6 +202,17 @@ DATABASES = {
         'OPTIONS': {
             'sql_mode': 'traditional',
         }
+    },
+    'GlobalLogger': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '${DB_NAME_GlobalLogger}',
+        'USER': '${DB_USER}',
+        'PASSWORD': '${DB_PASS}',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'traditional',
+        }
     }
 }
 EOF
@@ -212,7 +223,8 @@ _django_tables() {
     _message "Creating Django tables"
     cd ${SITE_FOLDER}
     source venv/bin/activate
-    ./manage.py migrate
+    python manage.py migrate
+    python manage.py migrate globallogger --database=GlobalLogger
 }
 
 

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'team',
     'machine',
+    'billing',
     'work',
     'consulting',
     'graph',
