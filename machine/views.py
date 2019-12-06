@@ -138,6 +138,8 @@ def MachineDescribe( request, Machine_ID ):
         if form.is_valid():
             entry = form.save(commit=False)
             entry.save()
+            from machine.loader import django_loader
+            django_loader.load( entry )
             return HttpResponseRedirect(f"/Machine/{entry.pk}/NN/Parameters")
         else:
             context.update( locals() )
@@ -148,19 +150,54 @@ def MachineDescribe( request, Machine_ID ):
         return render(request, 'machine/MachineDescribe.html', context)
 
 
-@method_decorator(login_required, name='dispatch')
-class MachineDatatableAjax(datatable.DTView):
+@login_required
+def MachineDatatableAjax( request, Machine_ID ):
     """ Return Input data. Using with jquery.datatables """
-    def get(self, request, Machine_ID):
-        # Query from table BATCH_INPUT_NNN
-        # without pk 'index'
-        # return JSON
-        machine = get_object_or_404( Machine, pk=Machine_ID )
+    import json
+    from django_datatables_view.mixins import LazyEncoder
+    from machine.datalistener import GetFileData
 
-        self.model = machine.get_machine_data_input_lines_model()
-        self.columns = list( machine.AnalysisSource_ColumnType.keys() )
-        self.order_columns = self.columns
-        return super().get(request)
+    # Query from table BATCH_INPUT_NNN
+    # without pk 'index'
+    # return JSON
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    url = os.path.join( settings.MEDIA_ROOT, machine.input_file.name )
+    df = GetFileData( url )
+    columns = df.columns
+
+    "draw"
+    "start"
+    "length"
+    "search[value]"
+    "order[i]"
+    "columns[i]"
+
+    draw = int( request.POST["draw"] )
+    start = int( request.POST["start"] )
+    length = int( request.POST["length"] )
+
+    data = df.head().values.tolist()
+    data = df.iloc[start:start+length]
+    total = len(df.index)
+
+    import numpy as np
+    data = data.replace( np.nan, '', regex=True )
+
+    data = data.values.tolist()
+
+    response = {
+        "draw": draw,
+        "recordsTotal": total,
+        "recordsFiltered": total,
+        "data": data,
+        # "error": False,
+        "result": "ok"
+    }
+
+    dump = json.dumps(response, cls=LazyEncoder)
+
+    return HttpResponse( dump, content_type='application/json' )
 
 
 @login_required
@@ -237,6 +274,7 @@ def MachineNNParameters( request, Machine_ID ):
         form = MachineNNParametersForm( instance=machine )
         context.update( locals() )
         return render(request, 'machine/MachineNNParameters.html', context)
+
 
 
 

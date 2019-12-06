@@ -10,7 +10,7 @@ urlpatterns = [
     # Input
     path('Machine/<int:Machine_ID>/Main', views.MachineMain ),
     path('Machine/<int:Machine_ID>/Describe', views.MachineDescribe ),
-    path('Machine/<int:Machine_ID>/datatable-ajax', views.MachineDatatableAjax.as_view() ),
+    path('Machine/<int:Machine_ID>/datatable-ajax', views.MachineDatatableAjax ),
     path('Machine/<int:Machine_ID>/InputCorrelation', views.MachineInputCorrelation ),
 
     # Graph

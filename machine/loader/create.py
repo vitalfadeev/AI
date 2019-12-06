@@ -29,3 +29,4 @@ def crete_output_table( machine ):
 def create_data_tables( machine ):
     crete_input_table( machine )
     crete_output_table( machine )
+

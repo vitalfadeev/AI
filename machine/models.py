@@ -148,10 +148,13 @@ def MachineDataInputLinesModelFactory( machine_id, columns: list, types: dict, a
 
 
 def MachineDataOutputLinesModelFactory( machine_id, columns: list, types: dict, additional_columns: dict ):
+    fields = _get_fields( columns, types )
+    fields.update( additional_columns )
+
     cls = DynamicModel( (models.Model, DymoMixin),
                          f"Machine_{machine_id}_DataOutputLines",
                          table=f"Machine_{machine_id}_DataOutputLines",
-                         fields=[],
+                         fields=fields,
                          app_label="machine",
                          module_name="",
                          primary_key_column="LineInput_ID",
@@ -160,7 +163,7 @@ def MachineDataOutputLinesModelFactory( machine_id, columns: list, types: dict, 
     cls._meta.Machine_ID = machine_id
 
     cls._meta.indexes = [
-        models.Index( fields=[ 'LineInput_ID' ] ),
+        models.Index( fields=[ 'LineInput_ID' ], name=f"Machine_{machine_id}_LineOutput_ID" ),
     ]
 
     return cls
@@ -408,5 +411,5 @@ def machine_post_save( sender, instance, created=False, **kwargs ):
     if created:
         url = instance.input_file.path
         # Pre-analyze data and load
-        django_loader.load( url, instance )
+        # django_loader.load( url, instance )
 

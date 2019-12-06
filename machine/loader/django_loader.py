@@ -130,7 +130,7 @@ def prenanlyze( machine, url, file_handle ):
     machine._dataframe = dataframe
 
 
-def load( url, machine ):
+def load( machine ):
     # Create Input and Output tables
     create_data_tables( machine )
 
@@ -143,5 +143,6 @@ def load( url, machine ):
         load_pandas_dataframe( machine._dataframe, MachineDataInputLines )
     else:
         # load dataset from file
-        dataframe = load_to_dataframe( url, file_handle=None )
+        dataframe = load_to_dataframe( machine.input_file.path, file_handle=None )
+
 
