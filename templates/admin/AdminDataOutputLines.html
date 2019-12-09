@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% load i18n static %}
+{% block title %} Machine Data Output Lines {% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+     &rsaquo; <a href="/admin/machine/machine/">Machines</a> &rsaquo; Machine Data Output Lines
+  </div>
+{% endblock %}
+
+{% block content %}
+
+<table id="machine-data-output-table" data-ajax-url="/admin/Machine/{{Machine_ID}}/datatable-output-ajax" data-dom="rptil"  data-page-length="12" data-scroll-X=true  data-order="[]" class="striped" >
+
+  <thead>
+
+  <tr>
+    {% for column in columns %}
+    <th>{{ column }}</th>
+    {% endfor %}
+  </tr>
+
+  </thead>
+
+  <tbody></tbody>
+
+</table>
+
+<!-- jQuery -->
+<script src="/static/jquery/jquery-3.4.1.min.js"></script>
+
+<!-- CSS -->
+{% block css %}{% endblock css %}
+
+<!-- JS -->
+{% block js %}{% endblock js %}
+
+<!-- jAuery.DataTables -->
+{% include "datatables.html" with table="#machine-data-output-table" %}
+
+{% endblock content %}

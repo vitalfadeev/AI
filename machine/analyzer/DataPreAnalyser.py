@@ -1,3 +1,4 @@
+import collections
 import re
 import json
 import numpy as np
@@ -34,14 +35,14 @@ class AnalyzedObject:
 
     def __init__(self):
         self.dataset                                      = None
-        self.AnalysisSource_ColumnsNameInput              = {}
-        self.AnalysisSource_ColumnsNameOutput             = {}
-        self.AnalysisSource_ColumnsMissingPercentage      = {}
-        self.AnalysisSource_ColumnsType                   = {}
+        self.AnalysisSource_ColumnsNameInput              = collections.OrderedDict()
+        self.AnalysisSource_ColumnsNameOutput             = collections.OrderedDict()
+        self.AnalysisSource_ColumnsMissingPercentage      = collections.OrderedDict()
+        self.AnalysisSource_ColumnsType                   = collections.OrderedDict()
         self.AnalysisSource_Errors                        = {}
         self.AnalysisSource_Warnings                      = {}
         self.AnalysisSource_ColumnType_GroupCountDataType = {}
-        self.AnalysisSource_ColumnsListMaxSize                   = {}
+        self.AnalysisSource_ColumnsListMaxSize            = {}
 
     def add_error_info_for_column(self, column, error_message):
         if column not in self.AnalysisSource_Errors:
@@ -444,10 +445,10 @@ def analyse_source_data_find_input_output(loaded_data, user_input_columns=None, 
 
 
 if __name__ == '__main__':
-    from CreateConnectionToDB import get_db_connection
-    data_from_file = pd.read_excel("DataSets/test-2.xls")
+    # from CreateConnectionToDB import get_db_connection
+    data_from_file = pd.read_excel("../tests/6.xlsx")
 
-    cn = get_db_connection(AI_CURSOR=True)
+    # cn = get_db_connection(AI_CURSOR=True)
 
 
 

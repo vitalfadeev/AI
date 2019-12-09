@@ -166,26 +166,32 @@ def MachineDatatableAjax( request, Machine_ID ):
 
     url = os.path.join( settings.MEDIA_ROOT, machine.input_file.name )
     df = GetFileData( url )
-    columns = df.columns
+    columns = machine.AnalysisSource_ColumnType.keys()
 
-    "draw"
-    "start"
-    "length"
-    "search[value]"
-    "order[i]"
-    "columns[i]"
+    # "draw"
+    # "start"
+    # "length"
+    # "search[value]"
+    # "order[i]"
+    # "columns[i]"
 
     draw = int( request.POST["draw"] )
     start = int( request.POST["start"] )
     length = int( request.POST["length"] )
 
+    # get block
     data = df.head().values.tolist()
     data = df.iloc[start:start+length]
     total = len(df.index)
 
+    # replace NaN to ''
     import numpy as np
     data = data.replace( np.nan, '', regex=True )
 
+    # reorder
+    data = data[columns]
+
+    # to list
     data = data.values.tolist()
 
     response = {
