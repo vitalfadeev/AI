@@ -11,7 +11,11 @@
     }
   </style>
 
-  {% include 'menu-vertical-machine.html' %}
+  {% if machine.is_data_imported %}
+    {% include 'menu-vertical-machine.html' %}
+  {% else %}
+    {% include 'menu-vertical-machine-short.html' %}
+  {% endif %}
 
   <main>
     <div class="container">

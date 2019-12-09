@@ -1,128 +1,102 @@
 #####################################################################################################################
 # Store helper
 #####################################################################################################################
-from machine.datalistener import GetFileData, DataStoreInSql
+from machine.datalistener import GetFileData
+from machine.loader import django_loader
+from django.db import connections
 
 
-def GetSameColumns(db_cols, file_cols):
-    """ Return names from first list if matched in second list
-        :param db_cols:     [""]
-        :param file_cols:   [""]
-        :return:            [""] Same columns. ex: [a b c] & [a b d] = [a b]
-    """
-    common = set(db_cols) & set(file_cols)
-    return list(common)
+def import_from_file( machine, file, delete_old=False ):
+    model = machine.get_machine_data_input_lines_model()
+
+    if delete_old:
+        delete_old_records( machine )
+
+    df = GetFileData( file )
+
+    django_loader.load_pandas_dataframe( df, model )
+
+    set_IsForLearning( machine, model )
+    set_IsForSolving( machine, model )
+    set_IsWithMissingValues( machine, model )
+    set_IsForEvaluation( machine, model, df )
 
 
-def ProcessFile(ffname, SettingFormatDate=DMY):
-    """ Read uploaded file, parse, insert into DB. Ir wrapper around main importer function.
-        :param ffname:
-        :return:
-    """
-    # read file (csv, xls, json, xml). into pandas.DataFrame
-    df = GetFileData(ffname)
-
-    # get column names common.
-    # 1. get table columns
-    # 2. get file columns
-    # 3. find same
-    dbcols = settings.ColumnsNameInput + settings.ColumnsNameOutput
-    dfcols = list(df.columns)
-    SameColumns = GetSameColumns(dbcols, dfcols)
-
-    if SameColumns:
-        # reduce data size: keep only required columns
-        DataArrayToWrite = df[SameColumns]
-
-        # insert into DB
-        DatabaseName     = settings.BrainID
-        TableName        = settings.TABLENAME
-        ColumNames       = SameColumns
-
-        # main function for store data to DB
-        lastid = DataStoreInSql(DatabaseName, TableName, ColumNames, DataArrayToWrite, SettingFormatDate=DMY)
-
-        # post insert service script
-        PostInsert(df.shape[0], lastid)
-
-        return lastid
-
-    else:
-        # warning if no same columns
-        warning = "Not all columns inserted. Expected: {}, Inserted: {}".format(dbcols, SameColumns)
-        abort(500, warning)
+def delete_old_records( machine ):
+    model = machine.get_machine_data_input_lines_model()
+    model.objects.all().delete()
 
 
-def PostInsert(rows_count, lastid):
-    """ Post Insert service script.
-        Update predefined columns: 'IsForLearning' and other
-        :param rows_count int  Row in data packet
-        :param lastid     int  Last inserted ID
-    """
-    DatabaseName = settings.BrainID             # DB name
-    TableName    = settings.TABLENAME           # DB table name
-    cols_in      = settings.ColumnsNameInput    # input columns
-    cols_out     = settings.ColumnsNameOutput   # output columns
-
-    # get DB connection
-    dbc = get_db_connection(DatabaseName)
-
+def set_IsForLearning( machine, model ):
     # After all lines stored, it is possible to execute a sql command to update IsForLearning=1 for all lines with no values empty in all (columnsInput+columnsOutPut)
     # make SQL condition: LENGTH(Col1) > 0 AND Col1 IS NOT NULL ...
+    table = model._meta.db_table
+
+    cols_in      = machine.get_machine_data_input_columns()    # input columns
+    cols_out     = machine.get_machine_data_output_columns()   # output columns
+
     conds = []
     for col in cols_in + cols_out:
         conds.append( "LENGTH(`{}`) > 0 AND `{}` IS NOT NULL".format(col, col) )
     cond = " AND ".join( conds )
 
     # execute sql
-    dbc.execute("""
-        UPDATE `{}` 
-           SET IsForLearning = 1 
-         WHERE {}"""
-        .format(
-            TableName,
-            cond
-        )
-    )
+    with connections['MachineData'].cursor() as cursor:
+        cursor.execute(f"""
+            UPDATE `{table}` 
+               SET IsForLearning = 1 
+             WHERE {cond}
+        """)
 
+
+def set_IsForSolving( machine, model ):
     # After all lines stored, it is possible to execute a sql command to update IsForSolving=1 for all lines with all values in (columnsInput) and none or some values in columnsOutPut
     # make SQL condition: LENGTH(Col1) > 0 AND Col1 IS NOT NULL ...
+    table = model._meta.db_table
+
+    cols_in      = machine.get_machine_data_input_columns()    # input columns
+
     conds = []
     for col in cols_in:
         conds.append( "LENGTH(`{}`) > 0 AND `{}` IS NOT NULL".format(col, col) )
     cond = " AND ".join( conds )
 
     # execute sql
-    dbc.execute("""
-        UPDATE `{}` 
-           SET IsForSolving = 1 
-         WHERE {}"""
-        .format(
-            TableName,
-            cond
-        )
-    )
+    with connections['MachineData'].cursor() as cursor:
+        cursor.execute(f"""
+            UPDATE `{table}` 
+               SET IsForSolving = 1 
+             WHERE {cond}
+        """)
 
+
+def set_IsWithMissingValues( machine, model ):
     # After all lines stored, it is possible to execute a sql command to update IsWithMissingValues=1 for all lines with some values missing in columnsInput
+    table = model._meta.db_table
+
+    cols_in      = machine.get_machine_data_input_columns()    # input columns
+
     conds = []
     for col in cols_in:
         conds.append( "( LENGTH(`{}`) = 0 OR `{}` IS NULL )".format(col, col) )
     cond = " AND ".join( conds )
 
     # execute sql
-    dbc.execute("""
-        UPDATE `{}` 
-           SET IsWithMissingValues = 1 
-         WHERE {}"""
-        .format(
-            TableName,
-            cond
-        )
-    )
+    with connections['MachineData'].cursor() as cursor:
+        cursor.execute(f"""
+            UPDATE `{table}` 
+               SET IsWithMissingValues = 1 
+             WHERE {cond}
+        """)
 
 
+def set_IsForEvaluation( machine, model, df ):
     # After all lines stored, it is possible to execute a sql command to update IsForEvluation=1  on 10% lines (Max 100 lines) where  IsForLearning=1
-    conds = []
+    table = model._meta.db_table
+
+    rows_count = len(df.index)
+    lastid = model.get_last_id()
+
     # get chunk id
     chunk_size = int(rows_count / 10)  # 10%
     if chunk_size > 100:
@@ -133,14 +107,10 @@ def PostInsert(rows_count, lastid):
         chunk_id = 0
 
     # execute sql
-    dbc.execute("""
-        UPDATE `{}` 
-           SET IsForEvaluation = 1 
-         WHERE IsForLearning = 1 AND ID > {}"""
-        .format(
-            TableName,
-            chunk_id
-        )
-    )
-
-
+    with connections['MachineData'].cursor() as cursor:
+        cursor.execute(f"""
+            UPDATE `{table}` 
+               SET IsForEvaluation = 1 
+             WHERE IsForLearning = 1 
+               AND LineInput_ID > {chunk_id}
+        """)

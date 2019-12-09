@@ -2,21 +2,9 @@ import io
 import os
 from collections import defaultdict
 from django.apps import apps
-
-
-# export
-# df = pd.DataFrame(list(BlogPost.objects.all().values()))
-
-# export
-# from django_pandas.io import read_frame
-# qs = model.objects.all()
-# df = read_frame( qs )
-# from django.core.exceptions import ValidationError
-from pandas.tests.io.json.test_ujson import orient
 from rest_framework.exceptions import ValidationError
-
 from machine.analyzer.DataPreAnalyser import analyse_source_data_find_input_output
-from machine.loader.create import create_model_table, create_data_tables
+from machine.loader.create import  create_data_tables
 
 
 class BulkCreateManager(object):
@@ -71,8 +59,6 @@ def load_csv_to_model( url, model, columns, types ):
 
 
 def load_pandas_dataframe( dataframe, model ):
-    fields = model._meta.get_fields()
-
     instances = [
         model( **row ) for row in dataframe.to_dict( orient="records" )
     ]
@@ -119,13 +105,13 @@ def prenanlyze( machine, url, file_handle ):
     #     raise ValidationError( f"errors: '{url}': {A.errors_info}")
 
     # Save analyzer result
-    machine.AnalysisSource_ColumnsNameInput = A.column_names_input
-    machine.AnalysisSource_ColumnsNameOutput = A.column_names_output
-    machine.AnalysisSource_ColumnType = A.column_types
-    machine.AnalysisSource_Errors = A.errors_info
-    machine.AnalysisSource_Warnings = A.warning_info
-    machine.AnalysisSource_ColumnsMissingPercentage = A.percentage_of_missing_value_for_column
-    machine.AnalysisSource_ListMaxSize = A.lists_size
+    machine.AnalysisSource_ColumnsNameInput = A.AnalysisSource_ColumnsNameInput
+    machine.AnalysisSource_ColumnsNameOutput = A.AnalysisSource_ColumnsNameOutput
+    machine.AnalysisSource_ColumnType = A.AnalysisSource_ColumnsType
+    machine.AnalysisSource_Errors = A.AnalysisSource_Errors
+    machine.AnalysisSource_Warnings = A.AnalysisSource_Warnings
+    machine.AnalysisSource_ColumnsMissingPercentage = A.AnalysisSource_ColumnsMissingPercentage
+    machine.AnalysisSource_ListMaxSize = A.AnalysisSource_ColumnsListMaxSize
 
     machine._dataframe = dataframe
 
@@ -134,15 +120,7 @@ def load( machine ):
     # Create Input and Output tables
     create_data_tables( machine )
 
-    # Get model DataInputLines
-    MachineDataInputLines = machine.get_machine_data_input_lines_model()
-
     # Load data
-    if hasattr(machine, "_dataframe"):
-        # get dataset from pre-analyzer
-        load_pandas_dataframe( machine._dataframe, MachineDataInputLines )
-    else:
-        # load dataset from file
-        dataframe = load_to_dataframe( machine.input_file.path, file_handle=None )
-
+    from machine.importation import importation
+    importation.import_from_file( machine, machine.input_file.path, delete_old=False )
 

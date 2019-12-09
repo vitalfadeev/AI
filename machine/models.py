@@ -335,8 +335,34 @@ class Machine(models.Model, MachineMixin):
 
 
     def get_machine_data_input_columns( self ):
-        types = self.AnalysisSource_ColumnType
-        return list( types.keys() )
+        cols = self.AnalysisSource_ColumnsNameInput
+        cols = [ col for col, is_input in cols.items() if is_input ]
+        return cols
+
+
+    def get_machine_data_output_columns( self ):
+        cols = self.AnalysisSource_ColumnsNameOutput
+        cols = [ col for col, is_input in cols.items() if is_input ]
+        return cols
+
+
+    @property
+    def is_data_imported( self ):
+        """ Check for Machine_NN_DataInputLines exists """
+        model = self.get_machine_data_input_lines_model()
+        table = model._meta.db_table
+
+        sql = f"""
+        SELECT count(*) as cnt 
+          FROM information_schema.tables
+         WHERE table_name = "{table}"
+        """
+        from django.db import connection
+
+        with connection.cursor() as cursor:
+            cursor.execute( sql )
+            row = cursor.fetchone()
+        return row[ 0 ] > 0
 
 
     class Meta:

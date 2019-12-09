@@ -1,4 +1,5 @@
 import os
+from functools import wraps
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
@@ -10,6 +11,7 @@ from django.conf import settings
 from graph import graphs
 from graph.models import Graph
 from machine.datainput import datatable
+from machine.decorators import file_import_required
 from machine.models import Machine
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
     MachineNNShapeForm, MachineInputGraphForm, MachineImportationFromFileForm
@@ -201,6 +203,7 @@ def MachineDatatableAjax( request, Machine_ID ):
 
 
 @login_required
+#@file_import_required
 def MachineInputCorrelation( request, Machine_ID ):
     import plotly.graph_objects as go
     import plotly.offline as opy
@@ -419,6 +422,13 @@ def ImportationFromFile( request, Machine_ID ):
     if request.POST:
         form = MachineImportationFromFileForm( request.POST, request.FILES )
         if form.is_valid():
+            from machine.importation.importation import import_from_file
+
+            if form.cleaned_data['clear_or_append'] == "DELETE":
+                import_from_file( machine, form.from_file.path, delete_old=True )
+            else:
+                import_from_file( machine, form.from_file.path, delete_old=False )
+
             return HttpResponseRedirect(f"/Machine/{Machine_ID}/Describe")
         else:
             context.update( locals() )

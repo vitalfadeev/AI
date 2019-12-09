@@ -13,70 +13,70 @@ setattr(DatabaseOperations, 'quote_name', quote_name_fixed)
 
 
 class DymoMixin:
-    @classmethod
-    def get_column_names(cls, without_pk=False):
-        titles = []
-        for field in cls._meta.get_fields():
-            if without_pk:
-                if field.primary_key:
-                    pass
-                else:
-                    titles.append(field.db_column.strip('`'))
-            else:
-                titles.append(field.db_column.strip('`'))
-        return titles
+    # @classmethod
+    # def get_column_names(cls, without_pk=False):
+    #     titles = []
+    #     for field in cls._meta.get_fields():
+    #         if without_pk:
+    #             if field.primary_key:
+    #                 pass
+    #             else:
+    #                 titles.append(field.db_column.strip('`'))
+    #         else:
+    #             titles.append(field.db_column.strip('`'))
+    #     return titles
+    #
+    #
+    # @classmethod
+    # def get_field_names(cls, without_pk=False):
+    #     names = [ f.name for f in  cls._meta.get_fields() ]
+    #
+    #     if without_pk:
+    #         names = names[1:]
+    #
+    #     return names
+    #
+    #
+    # @classmethod
+    # def get_column_types(cls, without_pk=False):
+    #     types = []
+    #     for field in cls._meta.get_fields():
+    #         if without_pk:
+    #             if field.primary_key:
+    #                 pass
+    #             else:
+    #                 types.append(field.db_type)
+    #         else:
+    #             types.append(field.db_type)
+    #     return types
 
 
-    @classmethod
-    def get_field_names(cls, without_pk=False):
-        names = [ f.name for f in  cls._meta.get_fields() ]
-
-        if without_pk:
-            names = names[1:]
-
-        return names
+    # @classmethod
+    # def has_table(cls):
+    #     return has_table(cls._meta.db_table)
 
 
-    @classmethod
-    def get_column_types(cls, without_pk=False):
-        types = []
-        for field in cls._meta.get_fields():
-            if without_pk:
-                if field.primary_key:
-                    pass
-                else:
-                    types.append(field.db_type)
-            else:
-                types.append(field.db_type)
-        return types
+    # @classmethod
+    # def get_header_map(cls):
+    #     header = {}
+    #     cols = cls.get_column_names()
+    #     flds = cls.get_field_names()
+    #     for f, c in zip(flds, cols):
+    #         header[f] = c
+    #     return header
 
 
-    @classmethod
-    def has_table(cls):
-        return has_table(cls._meta.db_table)
-
-
-    @classmethod
-    def get_header_map(cls):
-        header = {}
-        cols = cls.get_column_names()
-        flds = cls.get_field_names()
-        for f, c in zip(flds, cols):
-            header[f] = c
-        return header
-
-
-    @classmethod
-    def get_column_data(cls, colname):
-        from django.db import connection
-        with connection.cursor() as cursor:
-            cursor.execute('SELECT `{}` FROM `{}`}'.format(colname, cls.db_table))
-
-            col = []
-            for row in cursor.fetchall():
-                col.append(row[0])
-
-            return col
+    # @classmethod
+    # def get_column_data(cls, colname):
+    #     from django.db import connection
+    #     with connection.cursor() as cursor:
+    #         cursor.execute('SELECT `{}` FROM `{}`}'.format(colname, cls.db_table))
+    #
+    #         col = []
+    #         for row in cursor.fetchall():
+    #             col.append(row[0])
+    #
+    #         return col
 
 
     @classmethod
@@ -93,6 +93,24 @@ class DymoMixin:
             sql = 'SELECT {} FROM `{}`'.format( fields, cls._meta.db_table )
             df = pandas.read_sql_query( sql, connection )
             return df
+
+
+    @classmethod
+    def get_last_id( cls ):
+        table = cls._meta.db_table
+        pk = "LineInput_ID"
+
+        with connections[ 'MachineData' ].cursor() as cursor:
+            cursor.execute( f"""
+                SELECT max({pk}) as maxid
+                  FROM `{table}` 
+            """ )
+
+            rows = cursor.fetchall()
+            maxid = int( rows[0][0] )
+
+        return maxid
+
 
 #
 # Dynamic model
