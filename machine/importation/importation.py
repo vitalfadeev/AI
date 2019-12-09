@@ -6,13 +6,13 @@ from machine.loader import django_loader
 from django.db import connections
 
 
-def import_from_file( machine, file, delete_old=False ):
+def import_from_file( machine, fname, delete_old=False ):
     model = machine.get_machine_data_input_lines_model()
 
     if delete_old:
         delete_old_records( machine )
 
-    df = GetFileData( file )
+    df = GetFileData( fname )
 
     django_loader.load_pandas_dataframe( df, model )
 

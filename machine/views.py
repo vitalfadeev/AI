@@ -420,6 +420,17 @@ def MachineExportationWithAPI( request, Machine_ID ):
 ##############################################################################3
 # Importation
 ##############################################################################3
+def handle_uploaded_file( f, Machine_ID ):
+    os.makedirs( f'/tmp/{Machine_ID}/importation', exist_ok=True )
+    local_file = f'/tmp/{Machine_ID}/importation/{f.name}'
+
+    with open( local_file, 'wb+' ) as destination:
+        for chunk in f.chunks():
+            destination.write( chunk )
+
+    return  local_file
+
+
 @login_required
 def ImportationFromFile( request, Machine_ID ):
     context = {}
@@ -430,10 +441,12 @@ def ImportationFromFile( request, Machine_ID ):
         if form.is_valid():
             from machine.importation.importation import import_from_file
 
+            local_path = handle_uploaded_file( request.FILES[ 'from_file' ], Machine_ID )
+
             if form.cleaned_data['clear_or_append'] == "DELETE":
-                import_from_file( machine, form.from_file.path, delete_old=True )
+                import_from_file( machine, local_path, delete_old=True )
             else:
-                import_from_file( machine, form.from_file.path, delete_old=False )
+                import_from_file( machine, local_path, delete_old=False )
 
             return HttpResponseRedirect(f"/Machine/{Machine_ID}/Describe")
         else:

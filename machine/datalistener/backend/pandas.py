@@ -148,19 +148,19 @@ def GetFileData( filename ):
     """
     # read data
     if filename.lower().endswith('csv'):
-        df = pandas.read_csv(filename, sep=None, engine='python') # python engine has autodetection
+        df = pandas.read_csv( filename, sep=None, engine='python') # python engine has autodetection
 
     elif filename.lower().endswith('xls'):
-        df = pandas.read_excel(filename)
+        df = pandas.read_excel( filename )
 
     elif filename.lower().endswith('xlsx'):
-        df = pandas.read_excel(filename)
+        df = pandas.read_excel( filename )
 
     elif filename.lower().endswith('json'):
-        df = pandas.read_json(filename, orient='records')
+        df = pandas.read_json( filename, orient='records')
 
     elif filename.lower().endswith('xml'):
-        df = GetFileDataXML(filename)
+        df = GetFileDataXML( filename )
 
     else:
         raise Exception("Unsuppported")
@@ -168,7 +168,7 @@ def GetFileData( filename ):
     return df
 
 
-def GetFileDataXML(filename):
+def GetFileDataXML( filename ):
     """ Read xml file with data
         :param filename:    "" file name
         :return:            pandas Dataframe
