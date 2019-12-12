@@ -441,7 +441,7 @@ def ImportationFromFile( request, Machine_ID ):
         if form.is_valid():
             from machine.importation.importation import import_from_file
 
-            local_path = handle_uploaded_file( request.FILES[ 'from_file' ], Machine_ID )
+            local_path = handle_uploaded_file( request.FILES[ 'file' ], Machine_ID )
 
             if form.cleaned_data['clear_or_append'] == "DELETE":
                 import_from_file( machine, local_path, delete_old=True )
@@ -463,8 +463,19 @@ def ImportationWithAPI( request, Machine_ID ):
     context = {}
     machine = get_object_or_404( Machine, pk=Machine_ID )
 
-    context.update( locals() )
-    return render(request, 'machine/MachineImportationWithAPI.html', context)
+    if request.POST:
+        if "file" in request.FILES:
+            from machine.importation.importation import import_from_file
+            local_path = handle_uploaded_file( request.FILES[ 'file' ], Machine_ID )
+            import_from_file( machine, local_path, delete_old=False )
+        else:
+            from machine.importation.importation import with_api_post
+            with_api_post( request, machine )
+
+    else:
+        columns = machine.get_machine_data_input_lines_columns()
+        context.update( locals() )
+        return render(request, 'machine/MachineImportationWithAPI.html', context)
 
 
 ###############################################################################################

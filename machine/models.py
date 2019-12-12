@@ -283,10 +283,10 @@ class Machine(models.Model, MachineMixin):
 
 
     def get_machine_data_input_lines_columns( self, include_predefined=False ):
-        columns = list( self.AnalysisSource_ColumnType.keys() )
+        columns = [ c for c,is_input in self.AnalysisSource_ColumnType.items() if is_input ]
 
         if include_predefined:
-            columns.extend( self.get_machine_data_input_lines_predefined_columns() )
+            columns.extend( self.get_machine_data_input_lines_predefined_columns().keys() )
 
         return columns
 
@@ -308,7 +308,7 @@ class Machine(models.Model, MachineMixin):
         columns = [ c for c, is_output in self.AnalysisSource_ColumnsNameOutput.items() if is_output ]
 
         if include_predefined:
-            columns.extend( self.get_machine_data_output_lines_predefined_columns() )
+            columns.extend( self.get_machine_data_output_lines_predefined_columns().keys() )
 
         return columns
 

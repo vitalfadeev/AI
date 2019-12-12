@@ -83,7 +83,7 @@ class MachineInputGraphForm( ModelForm ):
 
 
 class MachineImportationFromFileForm( forms.Form ):
-    from_file = forms.FileField()
+    file = forms.FileField()
     clear_or_append = forms.CharField()
 
 

@@ -31,7 +31,7 @@ urlpatterns = [
     path( 'Machine/<int:Machine_ID>/ExportationToFile', views.MachineExportationToFile ),
     path( 'Machine/<int:Machine_ID>/ExportationWithAPI', views.MachineExportationWithAPI ),
 
-    # Omport
+    # Import
     path( 'Machine/<int:Machine_ID>/ImportationFromFile', views.ImportationFromFile ),
     path( 'Machine/<int:Machine_ID>/ImportationWithAPI', views.ImportationWithAPI ),
 ]

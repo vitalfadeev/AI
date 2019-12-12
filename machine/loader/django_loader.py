@@ -66,6 +66,14 @@ def load_pandas_dataframe( dataframe, model ):
     model.objects.bulk_create( instances )
 
 
+def load_dict( array_of_dicts, model ):
+    instances = [
+        model( **row ) for row in array_of_dicts
+    ]
+
+    model.objects.bulk_create( instances )
+
+
 def load_to_dataframe( url: str, file_handle: io.FileIO = None ):
     import pandas as pd
 
