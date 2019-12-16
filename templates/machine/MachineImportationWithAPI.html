@@ -49,31 +49,6 @@
                 <p>
 <pre style="background:#eee; padding:20px;">
 <code class="python">
-""" Test upload csv
-"""
-print("test_store({}) ".format(format), end="")
-
-# make request
-r = requests.post(
-    'http://ai.ixioo.com/Machine/{{Machine_ID}}/ImportationWithAPI',
-    auth=HTTPBasicAuth('admin', 'pwd123'),  # http basic auth username/password
-    files={                                 # file to upload
-        'file': open(os.path.join(
-            BASE_DIR, 'tests', 'test-2.{}'.format(format)),
-            'rb'
-        )
-    })
-
-# check response
-if r.status_code == 200:                    # 200 - OK
-    print("[ OK ]")
-    print("  last id:", r.text)
-else:
-    print("[FAIL]")
-    print("  code:", r.status_code)
-    print("  text:", r.text)
-
-r.close()
 </code>
 </pre>
                 </p>
