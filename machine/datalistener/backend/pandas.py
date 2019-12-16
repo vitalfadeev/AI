@@ -3,7 +3,7 @@ import pandas
 from .formats import *
 
 
-def DataStoreInSql( DatabaseName, TableName, ColumNames, DataArrayToWrite, SettingFormatDate=DMY ):
+def DataStoreInSql( DatabaseName, TableName, ColumNames, DataArrayToWrite, SettingFormatDate=DMY, connection=None  ):
     """ Insert data into DB
         :param DatabaseName:     ""
         :param TableName:        ""
@@ -15,7 +15,8 @@ def DataStoreInSql( DatabaseName, TableName, ColumNames, DataArrayToWrite, Setti
     df = pandas.DataFrame(DataArrayToWrite, columns=ColumNames)
 
     # get connection
-    connection = get_db_connection( DatabaseName )
+    if connection is None:
+        connection = get_db_connection( DatabaseName )
 
     # insert into DB. if table not exists - create, if exists - append
     df.to_sql(TableName, connection, if_exists='append', method='multi', index_label='ID', index=False)
@@ -31,7 +32,7 @@ def DataStoreInSql( DatabaseName, TableName, ColumNames, DataArrayToWrite, Setti
     return LastPrimaryKeyWritten
 
 
-def DataReadFromSql( DatabaseName, TableName, ExportLinesAfterPrimaryKey=None, FormatOutput=FORMAT_CSV ):
+def DataReadFromSql( DatabaseName, TableName, ExportLinesAfterPrimaryKey=None, FormatOutput=FORMAT_CSV, connection=None, index_col="ID" ):
     """ Read from DB
     :param DatabaseName:                ""
     :param TableName:                   ""
@@ -40,14 +41,15 @@ def DataReadFromSql( DatabaseName, TableName, ExportLinesAfterPrimaryKey=None, F
     :return:                            b""
     """
     #
-    connection = get_db_connection( DatabaseName )
+    if connection is None:
+        connection = get_db_connection( DatabaseName )
 
     #
     sql = "SELECT * FROM `{}`".format(TableName)
     if ExportLinesAfterPrimaryKey:
         sql = sql + " WHERE id >= {}".format( ExportLinesAfterPrimaryKey )
 
-    df = pandas.read_sql_query( sql, connection, index_col="ID" )
+    df = pandas.read_sql_query( sql, connection, index_col=index_col )
 
     if FormatOutput == FORMAT_CSV:
         DataArrayExported = df.to_csv(sep="\t" )

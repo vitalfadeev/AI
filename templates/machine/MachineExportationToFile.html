@@ -11,7 +11,24 @@
             <div class="section">
 
                 <!-- Here -->
-               <a href="/media/{{machine.input_file}}">Download</a>
+                <div>
+                    Download:
+                </div>
+                <div>
+                    <a href="/Machine/{{Machine_ID}}/ExportationToFile?format={{FORMAT_CSV}}">csv</a>
+                </div>
+                <div>
+                    <a href="/Machine/{{Machine_ID}}/ExportationToFile?format={{FORMAT_XLS}}">xls</a>
+                </div>
+                <div>
+                    <a href="/Machine/{{Machine_ID}}/ExportationToFile?format={{FORMAT_XLSX}}">xlsx</a>
+                </div>
+                <div>
+                    <a href="/Machine/{{Machine_ID}}/ExportationToFile?format={{FORMAT_JSON}}">json</a>
+                </div>
+                <div>
+                    <a href="/Machine/{{Machine_ID}}/ExportationToFile?format={{FORMAT_XML}}">xml</a>
+                </div>
 
             </div>
         </div>

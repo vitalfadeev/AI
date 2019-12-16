@@ -1,7 +1,8 @@
 import os
 from functools import wraps
 
-from django.http import HttpResponseRedirect, HttpResponse
+from basicauth.decorators import basic_auth_required
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -397,13 +398,54 @@ def MachineInputGraph( request, Machine_ID ):
 ##############################################################################3
 # Export
 ##############################################################################3
+#@basic_auth_required( target_test=lambda request: not request.user.is_authenticated )
 @login_required
 def MachineExportationToFile( request, Machine_ID ):
+    from machine.exportation.formats import FORMAT_CSV, FORMAT_XLS, FORMAT_XLSX, FORMAT_JSON, FORMAT_XML
+
     context = {}
     machine = get_object_or_404( Machine, pk=Machine_ID )
 
-    context.update( locals() )
-    return render(request, 'machine/MachineExportationToFile.html', context)
+    model = machine.get_machine_data_input_lines_model()
+    table = model._meta.db_table
+
+    if "format" in request.GET:
+        from_id = request.GET.get("from_id", None)
+        format  = request.GET.get("format", FORMAT_CSV)
+
+        # read data from DB to [[],[],]
+        from machine.exportation.exportation import ProcessRead
+
+        data = ProcessRead( 'MachineData', table, ExportLinesAfterPrimaryKey=from_id, FormatOutput=format, index_col="LineInput_ID" )
+
+        if format == FORMAT_CSV:
+            response = HttpResponse( data, content_type="text/csv" )
+            response['Content-Disposition'] = f"attachment; filename={table}.csv"
+
+        elif format == FORMAT_XLS:
+            response = HttpResponse( data, content_type="application/xls" )
+            response['Content-Disposition'] = f"attachment; filename={table}.xls"
+
+        elif format == FORMAT_XLSX:
+            response = HttpResponse( data, content_type="application/xlsx" )
+            response['Content-Disposition'] = f"attachment; filename={table}.xlsx"
+
+        elif format == FORMAT_JSON:
+            response = HttpResponse( data, content_type="application/json" )
+            response['Content-Disposition'] = f"attachment; filename={table}.json"
+
+        elif format == FORMAT_XML:
+            response = HttpResponse( data, content_type="application/xml" )
+            response['Content-Disposition'] = f"attachment; filename={table}.xml"
+
+        else:
+            raise Exception( f"unsupported format: {format}" )
+
+    else:
+        context.update( locals() )
+        return render(request, 'machine/MachineExportationToFile.html', context)
+
+    return response
 
 
 @login_required
@@ -413,8 +455,6 @@ def MachineExportationWithAPI( request, Machine_ID ):
 
     context.update( locals() )
     return render(request, 'machine/MachineExportationWithAPI.html', context)
-
-
 
 
 ##############################################################################3

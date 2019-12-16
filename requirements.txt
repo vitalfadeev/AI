@@ -24,6 +24,9 @@ django-excel-response
 # Access-Control-Allow-Origin
 django-cors-headers
 
+# Basic Auth for importation / exportation
+# django-basicauth
+
 # for save to SQL
 mysqlclient
 SQLAlchemy
@@ -33,6 +36,7 @@ jsonfield
 
 # for load xls, csv and save to SQL
 xlrd
+xlwt
 pandas
 numpy
 

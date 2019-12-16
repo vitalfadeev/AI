@@ -134,9 +134,10 @@ def read():
     format  = request.args.get("format", FORMAT_CSV)
 
     # read data from DB to [[],[],]
-    data = ProcessRead(ExportLinesAfterPrimaryKey=from_id, FormatOutput=format)
+    data = ProcessRead( ExportLinesAfterPrimaryKey=from_id, FormatOutput=format )
+
     if format == FORMAT_CSV:
-        return Response(
+        return JSon(
             data,
             mimetype="text/csv",
             headers={"Content-disposition":"attachment; filename={}.csv".format(settings.TABLENAME)})
