@@ -1,7 +1,6 @@
 import os
 from functools import wraps
 
-from basicauth.decorators import basic_auth_required
 from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
