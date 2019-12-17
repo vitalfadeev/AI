@@ -47,7 +47,7 @@ def DataReadFromSql( DatabaseName, TableName, ExportLinesAfterPrimaryKey=None, F
     #
     sql = "SELECT * FROM `{}`".format(TableName)
     if ExportLinesAfterPrimaryKey:
-        sql = sql + " WHERE id >= {}".format( ExportLinesAfterPrimaryKey )
+        sql = sql + " WHERE {} >= {}".format( index_col, ExportLinesAfterPrimaryKey )
 
     df = pandas.read_sql_query( sql, connection, index_col=index_col )
 
