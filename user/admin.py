@@ -25,8 +25,11 @@ class UserAdmin(admin.ModelAdmin):
         'is_superuser',
         'id',
     ]
+    readonly_fields = ('APIKey',)
     search_fields = [ 'Email', 'FirstName', 'LastName' ]
 
+    class Meta:
+        fields = ('APIKey',)
 
 # Register your models here.
 admin.site.register(User, UserAdmin)
