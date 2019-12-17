@@ -10,31 +10,113 @@
         <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
             <div class="section">
 
-                <!-- Here -->
-                MachineExportationWithAPI
+              <h5>ApiKey</h5>
+              <input type="text" value="{{request.user.APIKey}}" disabled />
+
+              <h5>URL</h5>
+              <input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled />
+
+              <!-- Format -->
+              <table>
+                <thead>
+                <tr>
+                  <th>Format</th>
+                  <th>URL</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>csv</td>
+                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled /></td>
+                  </tr>
+                  <tr>
+                    <td>xls</td>
+                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xls" disabled /></td>
+                  </tr>
+                  <tr>
+                    <td>xlsx</td>
+                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xlsx" disabled /></td>
+                  </tr>
+                  <tr>
+                    <td>json</td>
+                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=json" disabled /></td>
+                  </tr>
+                  <tr>
+                    <td>xml</td>
+                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xml" disabled /></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Examples -->
+              <!-- HighLight JS -->
+              <link rel="stylesheet" href="/static/highlight/styles/default.css">
+              <script src="/static/highlight/highlight.pack.js"></script>
+              <script>hljs.initHighlightingOnLoad();</script>
+
+              <!-- Python -->
+              <h5>Getting CSV (python)</h5>
                 <p>
-                    <pre>
+<pre style="background:#eee; padding:20px;">
+<code class="python">
+import requests
+
+API_KEY="{{request.user.APIKey}}"
+URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv'
+
+with requests.session() as client:
+    response = client.get( URL, headers={"Authorization": f"Token {API_KEY}"} )
+    print( "response.status_code: ", response.status_code )
+    print( "response.text:" )
+    print( response.text )
+</code>
+</pre>
+                </p>
+
+              <h5>Getting XLS (python)</h5>
+                <p>
+<pre style="background:#eee; padding:20px;">
+<code class="python">
+import requests
+
+API_KEY="{{request.user.APIKey}}"
+URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xls'
+outfile = "/tmp/1.xls"
+
+with requests.session() as client:
+    response = client.get( URL, headers={"Authorization": f"Token {API_KEY}"} )
+    print( "response.status_code: ", response.status_code )
+    print( "response.content length:", len(response.content), "bytes" )
+
+    with open( outfile, 'wb' ) as f:
+        f.write( response.content )
+</code>
+</pre>
+                </p>
+
+
+              <!-- Bash -->
+              <h5>Getting CSV (curl)</h5>
+                <p>
+<pre style="background:#eee; padding:20px;">
+<code class="bash">
+curl -v -X GET "http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv"  -H "Authorization: Token {{request.user.APIKey}}"
+</code>
+</pre>
+                </p>
+
+
+              <!-- Getting Token -->
+              <!--
+                <p>
+<pre style="background:#eee; padding:20px;">
+<code class="bash">
 curl -v -X POST -d '{"username":"username","password":"********"}'  -H "Content-Type: application/json" http://ai.ixioo.com/api-token-auth/
-                    </pre>
+</code>
+</pre>
                 </p>
 
-                <p>
-                    <pre>
-{"token":"b5726b6b3c50644d52921acc3a52c09864a18143"}
-                    </pre>
-                </p>
-
-                <p>
-                    <pre>
-curl -v -X GET "http://ai.ixioo.com/api/machine/16/InputLines?format=csv"  -H "Authorization: Token b5726b6b3c50644d52921acc3a52c09864a18143"
-                    </pre>
-                </p>
-
-                <p>
-                    <pre>
-...
-                    </pre>
-                </p>
+                -->
 
             </div>
         </div>
