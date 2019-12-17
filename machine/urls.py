@@ -30,6 +30,7 @@ urlpatterns = [
     # Export
     path( 'Machine/<int:Machine_ID>/ExportationToFile', views.MachineExportationToFile ),
     path( 'Machine/<int:Machine_ID>/ExportationWithAPI', views.MachineExportationWithAPI ),
+    path( 'api/machine/<int:Machine_ID>/InputLines', views.ApiMachineInputLines ),
 
     # Import
     path( 'Machine/<int:Machine_ID>/ImportationFromFile', views.ImportationFromFile ),

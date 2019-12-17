@@ -7,19 +7,27 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, renderer_classes
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
+from rest_framework.views import APIView
 
 from graph import graphs
 from graph.models import Graph
 from machine.datainput import datatable
-from machine.decorators import file_import_required
 from machine.models import Machine
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
     MachineNNShapeForm, MachineInputGraphForm, MachineImportationFromFileForm
+from machine.renderers import CSVRenderer, XLSRenderer, XMLRenderer, XLSXRenderer
 from machine.serializers import MachineSerializer
 
 from rest_framework import generics, viewsets
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import renderers
 
 
 ##############################################################################3
@@ -397,7 +405,6 @@ def MachineInputGraph( request, Machine_ID ):
 ##############################################################################3
 # Export
 ##############################################################################3
-#@basic_auth_required( target_test=lambda request: not request.user.is_authenticated )
 @login_required
 def MachineExportationToFile( request, Machine_ID ):
     from machine.exportation.formats import FORMAT_CSV, FORMAT_XLS, FORMAT_XLSX, FORMAT_JSON, FORMAT_XML
@@ -454,6 +461,13 @@ def MachineExportationWithAPI( request, Machine_ID ):
 
     context.update( locals() )
     return render(request, 'machine/MachineExportationWithAPI.html', context)
+
+
+@csrf_exempt
+@api_view(['GET'])
+@renderer_classes([TemplateHTMLRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, JSONRenderer, XMLRenderer])
+def ApiMachineInputLines( request, Machine_ID, format=None ):
+    return MachineExportationToFile( request, Machine_ID )
 
 
 ##############################################################################3
@@ -515,6 +529,29 @@ def ImportationWithAPI( request, Machine_ID ):
         columns = machine.get_machine_data_input_lines_columns()
         context.update( locals() )
         return render(request, 'machine/MachineImportationWithAPI.html', context)
+
+
+class ImportationWithAPI2( APIView ):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'auth': str(request.auth),  # None
+        }
+        return Response(content)
+
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def ImportationWithAPI3(request, format=None):
+    content = {
+        'user': str(request.user),  # `django.contrib.auth.User` instance.
+        'auth': str(request.auth),  # None
+    }
+    return Response(content)
 
 
 ###############################################################################################

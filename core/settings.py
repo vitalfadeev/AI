@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'core',
     'user',
     'rest_framework',
+    'rest_framework.authtoken',
     'team',
     'machine',
     'billing',
@@ -194,9 +195,13 @@ if os.path.isfile( os.path.join(os.path.dirname(os.path.abspath(__file__)), "loc
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
-        #'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100

@@ -149,6 +149,7 @@ _apache_back_config() {
     WSGIDaemonProcess ${DOMAIN} user=${APACHE_USER} group=${APACHE_GROUP} python-path=${SITE_FOLDER}:${VENV_PACKAGES_PATH}
     WSGIProcessGroup ${DOMAIN}
     WSGIScriptAlias / ${SITE_FOLDER}/core/wsgi.py
+    WSGIPassAuthorization On
 
     Alias /static/ ${SITE_FOLDER}/static/
 

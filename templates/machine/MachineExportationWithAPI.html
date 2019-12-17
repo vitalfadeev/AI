@@ -12,6 +12,29 @@
 
                 <!-- Here -->
                 MachineExportationWithAPI
+                <p>
+                    <pre>
+curl -v -X POST -d '{"username":"admin@localhost","password":"777"}'  -H "Content-Type: application/json" http://ai.local-ixioo.com/api-token-auth/
+                    </pre>
+                </p>
+
+                <p>
+                    <pre>
+{"token":"b5726b6b3c50644d52921acc3a52c09864a18143"}
+                    </pre>
+                </p>
+
+                <p>
+                    <pre>
+curl -v -X GET "http://ai.local-ixioo.com/api/machine/16/InputLines?format=csv"  -H "Authorization: Token b5726b6b3c50644d52921acc3a52c09864a18143"
+                    </pre>
+                </p>
+
+                <p>
+                    <pre>
+...
+                    </pre>
+                </p>
 
             </div>
         </div>
