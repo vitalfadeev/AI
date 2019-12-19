@@ -1,5 +1,4 @@
 import os
-from functools import wraps
 
 from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.shortcuts import render
@@ -7,9 +6,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, renderer_classes
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
@@ -22,12 +18,11 @@ from machine.models import Machine
 from machine.forms import MachineAddForm, MachineDescribeForm, MachineMainForm, MachineNNParametersForm, \
     MachineNNShapeForm, MachineInputGraphForm, MachineImportationFromFileForm
 from machine.renderers import CSVRenderer, XLSRenderer, XMLRenderer, XLSXRenderer
-from machine.serializers import MachineSerializer
+from machine.serializers import MachineSerializer, MachineInputLinesSerializer
 
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import renderers
 
 
 ##############################################################################3
@@ -217,6 +212,28 @@ def MachineDatatableAjax( request, Machine_ID ):
 
 
 @login_required
+def MachineInputLines( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+    columns = machine.AnalysisSource_ColumnType.keys()
+
+    context.update(locals())
+    return render(request, 'machine/MachineInputLines.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class MachineInputLinesAjax(datatable.DTView):
+    """ Return Input data. Using with jquery.datatables """
+    def get( self, request, Machine_ID ):
+        machine = get_object_or_404( Machine, pk=Machine_ID )
+
+        self.model = machine.get_machine_data_input_lines_model()
+        self.columns = machine.get_machine_data_input_lines_columns( include_predefined=True )
+        self.order_columns = self.columns
+        return super().get(request)
+
+
+@login_required
 #@file_import_required
 def MachineInputCorrelation( request, Machine_ID ):
     import plotly.graph_objects as go
@@ -246,6 +263,18 @@ def MachineInputCorrelation( request, Machine_ID ):
 
     context.update( locals() )
     return render(request, 'machine/MachineInputCorrelation.html', context)
+
+
+##############################################################################3
+# Output
+##############################################################################3
+@login_required
+def MachineOutput( request, Machine_ID ):
+    context = {}
+    machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    context.update( locals() )
+    return render(request, 'machine/MachineOutput.html', context)
 
 
 ##############################################################################3
@@ -463,11 +492,11 @@ def MachineExportationWithAPI( request, Machine_ID ):
     return render(request, 'machine/MachineExportationWithAPI.html', context)
 
 
-@csrf_exempt
-@api_view(['GET'])
-@renderer_classes([TemplateHTMLRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, JSONRenderer, XMLRenderer])
-def ApiMachineInputLines( request, Machine_ID, format=None ):
-    return MachineExportationToFile( request, Machine_ID )
+# @csrf_exempt
+# @api_view(['GET'])
+# @renderer_classes([TemplateHTMLRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, JSONRenderer, XMLRenderer])
+# def ApiMachineInputLines( request, Machine_ID, format=None ):
+#     return MachineExportationToFile( request, Machine_ID )
 
 
 ##############################################################################3
@@ -501,7 +530,7 @@ def ImportationFromFile( request, Machine_ID ):
             else:
                 import_from_file( machine, local_path, delete_old=False )
 
-            return HttpResponseRedirect(f"/Machine/{Machine_ID}/Describe")
+            return HttpResponseRedirect(f"/Machine/{Machine_ID}/InputLines")
         else:
             context.update( locals() )
             return render(request, 'machine/MachineImportationFromFile.html', context)
@@ -531,27 +560,28 @@ def ImportationWithAPI( request, Machine_ID ):
         return render(request, 'machine/MachineImportationWithAPI.html', context)
 
 
-class ImportationWithAPI2( APIView ):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+class ApiMachineInputLines(APIView):
+    renderer_classes = [JSONRenderer, TemplateHTMLRenderer, CSVRenderer, XLSRenderer, XLSXRenderer, XMLRenderer]
 
-    def get(self, request, format=None):
-        content = {
-            'user': str(request.user),  # `django.contrib.auth.User` instance.
-            'auth': str(request.auth),  # None
-        }
-        return Response(content)
+    def get( self, request, Machine_ID, format=None ):
+        return MachineExportationToFile( request, Machine_ID )
 
+    def post( self, request, Machine_ID, format=None ):
+        context = { }
+        machine = get_object_or_404( Machine, pk=Machine_ID )
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def ImportationWithAPI3(request, format=None):
-    content = {
-        'user': str(request.user),  # `django.contrib.auth.User` instance.
-        'auth': str(request.auth),  # None
-    }
-    return Response(content)
+        if "file" in request.FILES:
+            from machine.importation.importation import import_from_file
+            local_path = handle_uploaded_file( request.FILES[ 'file' ], Machine_ID )
+            import_from_file( machine, local_path, delete_old=False )
+        else:
+            from machine.importation.importation import with_api_post
+            with_api_post( request, machine )
+
+        serializer = MachineInputLinesSerializer(data={})
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 ###############################################################################################
@@ -570,3 +600,4 @@ class MachineViewSet(mixins.CreateModelMixin,
 
     def perform_create( self, serializer ):
         serializer.save( Owner_User_ID=self.request.user )
+

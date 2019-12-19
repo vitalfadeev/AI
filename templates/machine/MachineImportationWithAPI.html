@@ -10,13 +10,16 @@
         <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
             <div class="section">
 
-                <!-- Here -->
-                <h4>Importation With API</h4>
+              <!-- Here -->
+              <h5>ApiKey</h5>
+              <input type="text" value="{{request.user.APIKey}}" disabled />
 
-                <h5>Sending HTTP-POST key:value</h5>
+              <h5>URL</h5>
+              <input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines" disabled />
+
                 <p>
                     <code style="display:block; background: #eee; padding: 20px; margin: 20px 0;">
-                        POST http://ai.ixioo.com/Machine/{{Machine_ID}}/ImportationWithAPI
+                        POST http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines
                         <br/>
                         {column:value, ...}
                     </code>
@@ -28,29 +31,44 @@
                 <h5>Sending file</h5>
                 <p>
                     <code style="display:block; background: #eee; padding: 20px; margin: 20px 0;">
-                        POST http://ai.ixioo.com/Machine/{{Machine_ID}}/ImportationWithAPI
+                        POST http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines
                         <br/>
                         {file: data}
                     </code>
-
-                    <br/>
                     Where 'file' is reserved name, 'data' is file contents.
                 </p>
 
-                <h5>Example</h5>
-                Python
+              <!-- HighLight JS -->
+              <link rel="stylesheet" href="/static/highlight/styles/default.css">
+              <script src="/static/highlight/highlight.pack.js"></script>
+              <script>hljs.initHighlightingOnLoad();</script>
 
-                <!-- HighLight JS -->
-                <link rel="stylesheet" href="/static/highlight/styles/default.css">
-                <script src="/static/highlight/highlight.pack.js"></script>
-                <script>hljs.initHighlightingOnLoad();</script>
-
+              <!-- Python -->
+              <h5>Sending CSV (python)</h5>
                 <p>
 <pre style="background:#eee; padding:20px;">
 <code class="python">
+import requests
+
+
+URL='http://ai.local-ixioo.com/api/machine/1/InputLines'
+API_KEY="b5726b6b3c50644d52921acc3a52c09864a18143"
+
+with requests.session() as client:
+    files = { 'file': open( '../machine/tests/1.csv', 'rb' ) }
+
+    response = client.post(
+        URL,
+        headers={"Authorization": f"Token {API_KEY}"},
+        files=files
+    )
+
+    if response.status_code == 200:
+        print( "OK" )
 </code>
 </pre>
                 </p>
+
 
             </div>
         </div>

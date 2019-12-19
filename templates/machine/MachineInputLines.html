@@ -1,0 +1,50 @@
+{% extends 'machine/MachineLayout.html' %}
+{% load static %}
+{% load staticfiles %}
+{% block title %} Machine Input Lines {% endblock %}
+
+{% block main %}
+
+    <style>
+      #machine-data-input-table-fixed {
+        position: fixed;
+        z-index: 999;
+        background: white;
+        width: 50%;
+      }
+      #machine-data-input-table {
+        font-size: 11px;
+      }
+      #machine-data-input-table td {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      table.dataTable {
+        margin: 0 !important;
+      }
+    </style>
+
+    <!-- Machine Input Data -->
+    <div class="row">
+        <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
+
+              <table id="machine-data-input-table" data-ajax-url="/Machine/{{Machine_ID}}/input-lines-ajax" data-dom="rptil" data-page-length="25"  data-scroll-X=true  data-order="[]" class="striped">
+
+                <thead>
+                  <tr>
+                    {% for column in columns %}
+                      <td>{{ column }}</td>
+                    {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody></tbody>
+
+              </table>
+
+              {% include "datatables.html" with table="#machine-data-input-table" page_length=5 %}
+
+        </div>
+    </div>
+
+{% endblock main %}
