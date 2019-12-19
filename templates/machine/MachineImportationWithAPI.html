@@ -51,8 +51,8 @@
 import requests
 
 
-URL='http://ai.local-ixioo.com/api/machine/1/InputLines'
-API_KEY="b5726b6b3c50644d52921acc3a52c09864a18143"
+URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines'
+API_KEY="{{request.user.APIKey}}"
 
 with requests.session() as client:
     files = { 'file': open( '../machine/tests/1.csv', 'rb' ) }
