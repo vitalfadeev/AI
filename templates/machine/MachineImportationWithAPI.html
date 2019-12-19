@@ -15,11 +15,11 @@
               <input type="text" value="{{request.user.APIKey}}" disabled />
 
               <h5>URL</h5>
-              <input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines" disabled />
+              <input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines" disabled />
 
                 <p>
                     <code style="display:block; background: #eee; padding: 20px; margin: 20px 0;">
-                        POST http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines
+                        POST http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines
                         <br/>
                         {column:value, ...}
                     </code>
@@ -31,7 +31,7 @@
                 <h5>Sending file</h5>
                 <p>
                     <code style="display:block; background: #eee; padding: 20px; margin: 20px 0;">
-                        POST http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines
+                        POST http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines
                         <br/>
                         {file: data}
                     </code>
@@ -51,7 +51,7 @@
 import requests
 
 
-URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines'
+URL='http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines'
 API_KEY="{{request.user.APIKey}}"
 
 with requests.session() as client:

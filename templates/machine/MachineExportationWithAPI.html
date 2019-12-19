@@ -14,10 +14,10 @@
               <input type="text" value="{{request.user.APIKey}}" disabled />
 
               <h5>URL</h5>
-              <input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled />
+              <input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled />
 
               <code style="display:block; background: #eee; padding: 20px; margin: 20px 0;">
-                  GET http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv
+                  GET http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv
               </code>
 
               <!-- Format -->
@@ -31,23 +31,23 @@
                 <tbody>
                   <tr>
                     <td>csv</td>
-                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled /></td>
+                    <td><input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv" disabled /></td>
                   </tr>
                   <tr>
                     <td>xls</td>
-                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xls" disabled /></td>
+                    <td><input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=xls" disabled /></td>
                   </tr>
                   <tr>
                     <td>xlsx</td>
-                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xlsx" disabled /></td>
+                    <td><input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=xlsx" disabled /></td>
                   </tr>
                   <tr>
                     <td>json</td>
-                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=json" disabled /></td>
+                    <td><input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=json" disabled /></td>
                   </tr>
                   <tr>
                     <td>xml</td>
-                    <td><input type="text" value="http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xml" disabled /></td>
+                    <td><input type="text" value="http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=xml" disabled /></td>
                   </tr>
                 </tbody>
               </table>
@@ -66,7 +66,7 @@
 import requests
 
 API_KEY="{{request.user.APIKey}}"
-URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv'
+URL='http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv'
 
 with requests.session() as client:
     response = client.get( URL, headers={"Authorization": f"Token {API_KEY}"} )
@@ -84,7 +84,7 @@ with requests.session() as client:
 import requests
 
 API_KEY="{{request.user.APIKey}}"
-URL='http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=xls'
+URL='http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=xls'
 outfile = "/tmp/1.xls"
 
 with requests.session() as client:
@@ -104,7 +104,7 @@ with requests.session() as client:
                 <p>
 <pre style="background:#eee; padding:20px;">
 <code class="bash">
-curl -v -X GET "http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv"  -H "Authorization: Token {{request.user.APIKey}}"
+curl -v -X GET "http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv"  -H "Authorization: Token {{request.user.APIKey}}"
 </code>
 </pre>
                 </p>
@@ -115,7 +115,7 @@ curl -v -X GET "http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format
                 <p>
 <pre style="background:#eee; padding:20px;">
 <code class="bash">
-... "http://ai.ixioo.com/api/machine/{{Machine_ID}}/InputLines?format=csv&from_id=1140"...
+... "http://{{ request.get_host }}/api/machine/{{Machine_ID}}/InputLines?format=csv&from_id=1140"...
 </code>
 </pre>
                 </p>
