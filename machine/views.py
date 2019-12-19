@@ -244,7 +244,7 @@ def MachineInputCorrelation( request, Machine_ID ):
 
     # Data
     model = machine.get_machine_data_input_lines_model()
-    inout_cols = machine.AnalysisSource_ColumnsNameInput + machine.AnalysisSource_ColumnsNameOutput
+    inout_cols = machine.get_machine_data_input_lines_columns() + machine.get_machine_data_output_lines_columns()
     df = model.as_pandas_dataframe( inout_cols )
 
     import pandas as pd
