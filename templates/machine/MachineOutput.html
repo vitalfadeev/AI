@@ -10,7 +10,29 @@
         <div class="col s10 offset-s1  m10 offset-m1 xl10 offset-xl1">
             <div class="section">
 
-                Output
+              <style>
+              #machine-data-output-table_wrapper .dataTables_scrollBody {
+                padding-bottom: 20px;
+              }
+              </style>
+              <table id="machine-data-output-table" data-ajax-url="/Machine/{{Machine_ID}}/output-lines-ajax" data-dom="rptil" data-page-length="25"  data-scroll-X=true  data-order="[]" class="striped">
+
+                <thead>
+                  <tr>
+                    {% for column in columns_out %}
+                      <td class="amber lighten-4">{{ column }}</td>
+                    {% endfor %}
+                    {% for column in columns_in %}
+                      <td>{{ column }}</td>
+                    {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody></tbody>
+
+              </table>
+
+              {% include "datatables.html" with table="#machine-data-output-table" %}
 
             </div>
         </div>

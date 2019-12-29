@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.shortcuts import render
@@ -25,9 +26,9 @@ from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 
 
-##############################################################################3
+###############################################################################
 # Tools
-##############################################################################3
+###############################################################################
 def serve_html(filename):
     image_data = open(filename, "rb").read()
     return HttpResponse(image_data, content_type="text/html")
@@ -37,9 +38,9 @@ def serve_image(filename):
     return HttpResponse(image_data, content_type="image/png")
 
 
-##############################################################################3
+###############################################################################
 # Machines
-##############################################################################3
+###############################################################################
 @login_required
 def MachineAdd( request ):
     context = {}
@@ -108,9 +109,9 @@ class MachinesDatatableAjax(datatable.DTView):
         return qs
 
 
-##############################################################################3
+###############################################################################
 # Input
-##############################################################################3
+###############################################################################
 @login_required
 def MachineMain( request, Machine_ID ):
     context = {}
@@ -265,21 +266,66 @@ def MachineInputCorrelation( request, Machine_ID ):
     return render(request, 'machine/MachineInputCorrelation.html', context)
 
 
-##############################################################################3
+###############################################################################
 # Output
-##############################################################################3
+###############################################################################
 @login_required
 def MachineOutput( request, Machine_ID ):
+    from django.db import connections
+
     context = {}
     machine = get_object_or_404( Machine, pk=Machine_ID )
+
+    model = machine.get_machine_data_output_lines_model()
+    columns_out = machine.get_machine_data_output_lines_columns( include_predefined=True )
+    columns_in = machine.get_machine_data_input_lines_columns( include_predefined=True )
 
     context.update( locals() )
     return render(request, 'machine/MachineOutput.html', context)
 
 
-##############################################################################3
+@method_decorator( login_required, name='dispatch')
+class MachineOutputLinesAjax( datatable.DTView ):
+    """ Return Output data. Using with jquery.datatables """
+    def get( self, request, Machine_ID ):
+        machine = get_object_or_404( Machine, pk=Machine_ID )
+
+        model_in = machine.get_machine_data_input_lines_model()
+        model_out = machine.get_machine_data_output_lines_model()
+
+        columns_out = machine.get_machine_data_output_lines_columns( include_predefined=True )
+        columns_in = machine.get_machine_data_input_lines_columns( include_predefined=True )
+        columns = columns_out + columns_in
+
+        self.machine = machine
+        self.model = model_out
+        self.columns = columns
+        self.columns_in = columns_in
+        self.columns_out = columns_out
+        self.order_columns = columns
+        return super().get(request)
+
+    def get_initial_queryset(self):
+        return self.model.objects.all()
+
+    def render_column(self, row, column, *args, **kwargs):
+        if column in self.columns_in:
+            value = getattr(row.LineInput_ID, column)
+        else:
+            value = getattr(row, column)
+
+        # fix datetime field render
+        if isinstance(value, datetime):
+            return value.strftime(self.datetime_format)
+        else:
+            # return super().render_column(row, column, *args, **kwargs)
+            return value
+
+
+
+###############################################################################
 # NN
-##############################################################################3
+###############################################################################
 @login_required
 def MachineNNMain( request, Machine_ID ):
     context = {}
@@ -364,9 +410,9 @@ def MachineNNTensorboardEngineStatic( request, Machine_ID, ResourceFile ):
 
 
 
-##############################################################################3
+###############################################################################
 # Graph
-##############################################################################3
+###############################################################################
 @login_required
 def MachineInputGraph( request, Machine_ID ):
     context = {}
@@ -431,9 +477,9 @@ def MachineInputGraph( request, Machine_ID ):
     return render(request, 'machine/MachineInputGraph.html', context)
 
 
-##############################################################################3
+###############################################################################
 # Export
-##############################################################################3
+###############################################################################
 @login_required
 def MachineExportationToFile( request, Machine_ID ):
     from machine.exportation.formats import FORMAT_CSV, FORMAT_XLS, FORMAT_XLSX, FORMAT_JSON, FORMAT_XML
@@ -499,9 +545,9 @@ def MachineExportationWithAPI( request, Machine_ID ):
 #     return MachineExportationToFile( request, Machine_ID )
 
 
-##############################################################################3
+###############################################################################
 # Importation
-##############################################################################3
+###############################################################################
 def handle_uploaded_file( f, Machine_ID ):
     os.makedirs( f'/tmp/{Machine_ID}/importation', exist_ok=True )
     local_file = f'/tmp/{Machine_ID}/importation/{f.name}'

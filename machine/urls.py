@@ -20,6 +20,7 @@ urlpatterns = [
 
     # Output
     path('Machine/<int:Machine_ID>/Output', views.MachineOutput ),
+    path( 'Machine/<int:Machine_ID>/output-lines-ajax', views.MachineOutputLinesAjax.as_view() ),
 
     # NN
     path( 'Machine/<int:Machine_ID>/NN/Main', views.MachineNNMain ),
