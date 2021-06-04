@@ -2,7 +2,7 @@
 wheel
 
 # django
-django==2.2.4
+django==2.2.21
 
 # for auth
 django-allauth==0.39.1
