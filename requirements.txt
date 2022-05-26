@@ -42,7 +42,7 @@ numpy
 
 # for TensorBoard
 #tensorflow==1.13.1
-tensorflow==1.14.0
+tensorflow==2.7.2
 setuptools
 
 # for Graph
